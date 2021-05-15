@@ -32,13 +32,7 @@ public class BeansConfiguration {
     @Bean
     @Primary
     public AmazonSimpleEmailService amazonEmailClient() {
-        Region currentRegion = Regions.getCurrentRegion();
-        if (currentRegion == null) {
-            currentRegion = Region.getRegion(Regions.US_WEST_2);
-        }
-
-        AWSCredentials credentials = awsCreds.getCredentials();
-        AmazonSimpleEmailService awsSes = AmazonSimpleEmailServiceClientBuilder.standard()
+         AmazonSimpleEmailService awsSes = AmazonSimpleEmailServiceClientBuilder.standard()
                 .withCredentials(
                         new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials(

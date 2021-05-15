@@ -20,6 +20,15 @@ public class MailSenderComponent {
     private String emailFrom;
 
 
+    // TODO: move to props file
+    @Value("${amazon.access.key}")
+    private String amazonAccessKey;
+    @Value("${amazon.secret.key}")
+    private String amazonSecretKey;
+    @Value("${amazon.region}")
+    private String amazonRegion;
+
+
    private final AmazonSimpleEmailService awsSes;
 
     private static final Logger logger = LoggerFactory.getLogger(MailSenderComponent.class);
@@ -32,9 +41,9 @@ public class MailSenderComponent {
             throws MailFromDomainNotVerifiedException, MessageRejectedException {
 
         //************************************
-        AWSCredentialsProvider awsCreds = new ClasspathPropertiesFileCredentialsProvider();
+       // AWSCredentialsProvider awsCreds = new ClasspathPropertiesFileCredentialsProvider();
 
-        AWSCredentials credentials = awsCreds.getCredentials();
+     //   AWSCredentials credentials = awsCreds.getCredentials();
 
         //TODO: try to get region from EC2,
 
