@@ -1,6 +1,5 @@
 package com.se.service.notification.component;
 
-import com.amazonaws.auth.*;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.*;
 import org.slf4j.Logger;
@@ -17,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 public class MailSenderComponent {
 
     @Value("${ses.mail.address}")
-    private String emailFrom;
+    private String sesEmailFrom;
 
 
     // TODO: move to props file
@@ -69,7 +68,7 @@ public class MailSenderComponent {
         SendEmailRequest request = new SendEmailRequest()
                 .withDestination(new Destination().withToAddresses(emailTo))
                 .withMessage(message)
-                .withSource(emailFrom);
+                .withSource(sesEmailFrom);
 
 
         SendEmailResult sendEmailResult = awsSes.sendEmail(request);
