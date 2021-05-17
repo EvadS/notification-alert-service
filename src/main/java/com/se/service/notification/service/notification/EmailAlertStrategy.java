@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 /**
  * Created by Evgeniy Skiba
  */
@@ -37,45 +39,40 @@ public class EmailAlertStrategy implements NotificationAlertsStrategy {
     @Override
     public void sendNotification(NotificationModel notificationModel) {
 
-        if(isSesDefault){
-            //send by ses
-            sendBySes(notificationModel);
-        }
-        else {
-            // send by send grid
-            sendBySendGrid(notificationModel);
-        }
-    }
-
-    private void sendBySendGrid(NotificationModel notificationModel) {
-
         try {
-            mailSenderComponent.sendHtml(notificationModel.getRecipient(),
-                    notificationModel.getSubject(), notificationModel.getHtmlBody());
-            logger.debug("email sent to:{}", notificationModel.getRecipient());
+            if(isSesDefault){
+                //send by ses
+                sendBySes(notificationModel);
+            }
+            else {
+                // send by send grid
+                sendBySendGrid(notificationModel);
+            }
 
         } catch (MailFromDomainNotVerifiedException e) {
             logger.error("MailFromDomainNotVerifiedException: {}", e.getMessage());
         } catch (MessageRejectedException ex) {
             logger.error("MessageRejectedException: {}", ex.getMessage());
-        } catch (Exception e) {
+        } catch ( IOException ex){
+            String mailProvider = isSesDefault? "aws ses": "send grid";
+            logger.error("Send email exception. Provider:{}, message:{}",mailProvider,ex.getLocalizedMessage() );
+        }
+        catch (Exception e) {
             logger.error("Bind template exception: {}. Email didn't send.", e.getMessage());
         }
+
+    }
+
+    private void sendBySendGrid(NotificationModel notificationModel) throws IOException {
+        sendGridMailer.sendHtml(notificationModel.getRecipient(),
+                notificationModel.getSubject(), notificationModel.getHtmlBody());
+        logger.debug("email sent to:{}", notificationModel.getRecipient());
     }
 
     private void sendBySes(NotificationModel notificationModel) {
-        try {
-            sendGridMailer.sendHtml(notificationModel.getRecipient(),
-                    notificationModel.getSubject(), notificationModel.getHtmlBody());
-            logger.debug("email sent to:{}", notificationModel.getRecipient());
-
-        } catch (MailFromDomainNotVerifiedException e) {
-            logger.error("MailFromDomainNotVerifiedException: {}", e.getMessage());
-        } catch (MessageRejectedException ex) {
-            logger.error("MessageRejectedException: {}", ex.getMessage());
-        } catch (Exception e) {
-            logger.error("Bind template exception: {}. Email didn't send.", e.getMessage());
-        }
+        mailSenderComponent.sendHtml(notificationModel.getRecipient(),
+                notificationModel.getSubject(), notificationModel.getHtmlBody());
+        logger.debug("email sent to:{}", notificationModel.getRecipient());
     }
 
     @Override

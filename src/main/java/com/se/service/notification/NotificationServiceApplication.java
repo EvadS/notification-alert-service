@@ -18,29 +18,11 @@ import java.io.IOException;
  */
 @EnableJpaAuditing
 @SpringBootApplication
-public class NotificationServiceApplication  implements CommandLineRunner {
+public class NotificationServiceApplication  {
 
-    @Autowired
-    SendGridMailer sendGridMailer;
 
     public static void main(String[] args) {
         SpringApplication.run(NotificationServiceApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        try {
-            SendGrid sg = new SendGrid(System.getenv("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"));
-            Request request = new Request();
-            request.setMethod(Method.POST);
-            request.setEndpoint("mail/send");
-            request.setBody("{\"personalizations\":[{\"to\":[{\"email\":\"test@example.com\"}],\"subject\":\"Sending with Twilio SendGrid is Fun\"}],\"from\":{\"email\":\"test@example.com\"},\"content\":[{\"type\":\" text/html;\",\"value\": \"and easy to do anywhere, even with Java\"}]}");
-            Response response = sg.api(request);
-            System.out.println(response.getStatusCode());
-            System.out.println(response.getBody());
-            System.out.println(response.getHeaders());
-        } catch (IOException ex) {
-            throw ex;
-        } int a =0;
-    }
 }
