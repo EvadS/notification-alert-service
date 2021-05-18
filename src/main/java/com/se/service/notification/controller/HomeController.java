@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class HomeController {
 
+    // TODO: stub to start work with unit testing
     @GetMapping("/")
-    public @ResponseBody
-    String greeting() {
+    public @ResponseBody String greeting() {
         return "Hello, World";
     }
 }

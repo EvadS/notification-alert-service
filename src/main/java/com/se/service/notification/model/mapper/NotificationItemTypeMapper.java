@@ -20,5 +20,4 @@ public interface NotificationItemTypeMapper {
             @Mapping(target = "enabled", source = "enabled")
     })
     NotificationItemTypeItemResponse notificationItemTypeToResponse(NotificationType notificationType);
-
 }

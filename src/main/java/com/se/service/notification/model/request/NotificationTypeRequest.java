@@ -9,7 +9,7 @@ import java.util.List;
 public class NotificationTypeRequest {
 
     private long notificationItemId;
-    private List <NotificationTypeItemRequest> notificationTypeItemRequests = new ArrayList<>();
+    private List<NotificationTypeItemRequest> notificationTypeItemRequests = new ArrayList<>();
 
     public NotificationTypeRequest() {
     }

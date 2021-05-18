@@ -54,7 +54,7 @@ public class NotificationGroupController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<NotificationGroupResponse> updateNotificationGroup(
+    public ResponseEntity<NotificationGroupResponse> updateNotificationGroup(
             @PathVariable(value = "id") @NotNull Long id,
             @RequestBody @Valid NotificationGroupRequest groupRequest) {
         NotificationGroupResponse groupResponse = notificationService.updateNotificationGroup(id, groupRequest);
@@ -62,7 +62,7 @@ public class NotificationGroupController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<?> deleteNotificationGroup(@PathVariable(value = "id") @NotNull Long id) {
+    public ResponseEntity<?> deleteNotificationGroup(@PathVariable(value = "id") @NotNull Long id) {
         notificationService.deleteNotificationGroup(id);
         return ResponseEntity.accepted().build();
     }

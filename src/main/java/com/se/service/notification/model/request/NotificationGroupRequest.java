@@ -3,7 +3,6 @@ package com.se.service.notification.model.request;
 /**
  * Created by Evgeniy Skiba
  */
-
 public class NotificationGroupRequest {
 
     private String name;

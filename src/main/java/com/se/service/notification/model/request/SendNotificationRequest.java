@@ -13,14 +13,11 @@ import java.util.Map;
  */
 public class SendNotificationRequest {
 
-    @NotificationExists
-    private long notificationId;
-
     @NotEmpty
     List<DestinationAddressAlertType> destinationAddressList = new ArrayList<>();
-
-    Map<String, String > placeholdersMap = new HashMap<>();
-
+    Map<String, String> placeholdersMap = new HashMap<>();
+    @NotificationExists
+    private long notificationId;
     private String subject;
 
     public SendNotificationRequest() {

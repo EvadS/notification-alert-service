@@ -38,18 +38,17 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-
     @GetMapping("/{id}")
     @ApiOperation(value = "Notification",
             notes = "Notification details by id", tags = {})
-    ResponseEntity<NotificationResponse> getNotificationItem(@PathVariable(value = "id") @NotNull Long id){
+    public ResponseEntity<NotificationResponse> getNotificationItem(@PathVariable(value = "id") @NotNull Long id){
         NotificationResponse notificationResponse = notificationService.getNotificationItem(id);
         return  ResponseEntity.ok(notificationResponse);
     }
 
     @PostMapping
     @ApiOperation(value = "Create notification", notes = "Create  new notification")
-    ResponseEntity<NotificationBaseResponse> createNotificationItem(
+    public ResponseEntity<NotificationBaseResponse> createNotificationItem(
             @Valid @RequestBody NotificationRequest notificationRequest){
         NotificationBaseResponse notificationResponse = notificationService.createNotificationItem(notificationRequest);
         return ResponseEntity.ok(notificationResponse);
@@ -58,7 +57,7 @@ public class NotificationController {
     @PutMapping("/{id}")
     @ApiOperation(value = "Update Notification",
             notes = "Update Notification by request model and uniques notification id")
-    ResponseEntity<NotificationBaseResponse> updateNotificationItem(@PathVariable(value = "id") @NotNull Long id,
+    public ResponseEntity<NotificationBaseResponse> updateNotificationItem(@PathVariable(value = "id") @NotNull Long id,
                                                                 @RequestBody @Valid NotificationRequest notificationRequest){
         NotificationBaseResponse notificationResponse = notificationService.updateNotificationItem(id, notificationRequest);
         return ResponseEntity.ok(notificationResponse);
@@ -67,8 +66,6 @@ public class NotificationController {
     @GetMapping("/status/{id}/{status}")
     @ApiOperation(value = "Update Notification",
             notes = "Change notification status (enabled/disabled) according status path param")
-
-
     public ResponseEntity<NotificationGroupResponse> changeGroupStatus(
             @PathVariable(value = "id") @NotNull Long id,
             @PathVariable(value = "status") @NotNull boolean status) {
@@ -77,18 +74,18 @@ public class NotificationController {
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity deleteNotificationItem(@PathVariable(value = "id") @NotNull Long id){
+    public ResponseEntity<?> deleteNotificationItem(@PathVariable(value = "id") @NotNull Long id){
         notificationService.deleteNotificationItem(id);
         return  ResponseEntity.accepted().build();
     }
 
     @GetMapping(value = "/list", produces = "application/json")
-    ResponseEntity<Page<NotificationResponse>> pagedTemplateList(
+    public ResponseEntity<Page<NotificationResponse>> pagedTemplateList(
             @Min(value = 0, message = "Paged list started from zero index")
-            @RequestParam(name = "page", required = true, defaultValue = "0") int page,
+            @RequestParam(name = "page", defaultValue = "0") int page,
 
             @Min(value = 1, message = "Page size must not be less than one")
-            @RequestParam(name = "size", required = true, defaultValue = "1") int size){
+            @RequestParam(name = "size", defaultValue = "1") int size){
         Pageable pageable = PageRequest.of(
                 page,
                 size,

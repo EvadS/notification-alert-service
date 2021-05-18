@@ -8,7 +8,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,17 +27,14 @@ public interface NotificationMapper {
     NotificationResponse notificationItemToResponse(Notification notification, Set<String> placeHoList);
 
 
-
-
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),
             @Mapping(target = "htmlContent", source = "htmlPart"),
             @Mapping(target = "enabled", source = "enabled"),
-            @Mapping(target = "parentGroupId", ignore =  true)
+            @Mapping(target = "parentGroupId", ignore = true)
     })
     NotificationBaseResponse notificationItemToNotificationBaseResponse(Notification notification);
-
 
 
 }
