@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class SendGridMailer {
+public class SendGridMailerComponent {
 
-    private final static Logger logger = LoggerFactory.getLogger(SendGridMailer.class);
+    private final static Logger logger = LoggerFactory.getLogger(SendGridMailerComponent.class);
 
     @Value("${spring.sendgrid.api-key}")
     private String apiKey;

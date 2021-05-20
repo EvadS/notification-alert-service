@@ -4,8 +4,8 @@ package com.se.service.notification.service.notification;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.MailFromDomainNotVerifiedException;
 import com.amazonaws.services.simpleemail.model.MessageRejectedException;
-import com.se.service.notification.component.MailSenderComponent;
-import com.se.service.notification.component.SendGridMailer;
+import com.se.service.notification.component.SesMailSenderComponent;
+import com.se.service.notification.component.SendGridMailerComponent;
 import com.se.service.notification.model.NotificationModel;
 import com.se.service.notification.model.enums.NotificationAlertType;
 import org.slf4j.Logger;
@@ -25,13 +25,13 @@ public class EmailAlertStrategy implements NotificationAlertsStrategy {
     private boolean isSesDefault;
 
     private final static Logger logger = LoggerFactory.getLogger(EmailAlertStrategy.class);
-    private final MailSenderComponent mailSenderComponent;
-    private final SendGridMailer sendGridMailer;
+    private final SesMailSenderComponent sesMailSenderComponent;
+    private final SendGridMailerComponent sendGridMailerComponent;
     private final AmazonSimpleEmailService emailService;
 
-    public EmailAlertStrategy(MailSenderComponent mailSenderComponent, SendGridMailer sendGridMailer, AmazonSimpleEmailService emailService) {
-        this.mailSenderComponent = mailSenderComponent;
-        this.sendGridMailer = sendGridMailer;
+    public EmailAlertStrategy(SesMailSenderComponent sesMailSenderComponent, SendGridMailerComponent sendGridMailerComponent, AmazonSimpleEmailService emailService) {
+        this.sesMailSenderComponent = sesMailSenderComponent;
+        this.sendGridMailerComponent = sendGridMailerComponent;
         this.emailService = emailService;
     }
 
@@ -64,13 +64,13 @@ public class EmailAlertStrategy implements NotificationAlertsStrategy {
     }
 
     private void sendBySendGrid(NotificationModel notificationModel) throws IOException {
-        sendGridMailer.sendHtml(notificationModel.getRecipient(),
+        sendGridMailerComponent.sendHtml(notificationModel.getRecipient(),
                 notificationModel.getSubject(), notificationModel.getHtmlBody());
         logger.debug("email sent to:{}", notificationModel.getRecipient());
     }
 
     private void sendBySes(NotificationModel notificationModel) {
-        mailSenderComponent.sendHtml(notificationModel.getRecipient(),
+        sesMailSenderComponent.sendHtml(notificationModel.getRecipient(),
                 notificationModel.getSubject(), notificationModel.getHtmlBody());
         logger.debug("email sent to:{}", notificationModel.getRecipient());
     }

@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  * Created by Evgeniy Skiba on 14.05.21
  */
 @Component
-public class MailSenderComponent {
+public class SesMailSenderComponent {
 
     @Value("${ses.mail.address}")
     private String sesEmailFrom;
@@ -28,12 +28,12 @@ public class MailSenderComponent {
     private String amazonRegion;
 
 
-   private final AmazonSimpleEmailService awsSes;
+   private final AmazonSimpleEmailService awsSesComponent;
 
-    private static final Logger logger = LoggerFactory.getLogger(MailSenderComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(SesMailSenderComponent.class);
 
-    public MailSenderComponent(AmazonSimpleEmailService awsSes) {
-        this.awsSes = awsSes;
+    public SesMailSenderComponent(AmazonSimpleEmailService awsSes) {
+        this.awsSesComponent = awsSes;
     }
 
     public boolean sendHtml(String emailTo, String subject, String bodyHTML)
@@ -71,7 +71,7 @@ public class MailSenderComponent {
                 .withSource(sesEmailFrom);
 
 
-        SendEmailResult sendEmailResult = awsSes.sendEmail(request);
+        SendEmailResult sendEmailResult = awsSesComponent.sendEmail(request);
         logger.debug("Email with subject: {} has been sent. Message id: {}", subject, sendEmailResult.getMessageId());
         return true;
     }

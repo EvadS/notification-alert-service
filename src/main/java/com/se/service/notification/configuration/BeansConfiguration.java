@@ -5,6 +5,7 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.sns.AmazonSNSClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,6 +42,20 @@ public class BeansConfiguration {
                 .build();
 
         return awsSes;
+    }
+
+    // TODO: use builder
+    @Bean
+    public AmazonSNSClient awsSnsClient(){
+
+        AWSStaticCredentialsProvider awsStaticCredentialsProvider = new AWSStaticCredentialsProvider(
+                new BasicAWSCredentials(amazonAccessKey, amazonSecretKey));
+
+        //  .withRegion(Regions.fromName(amazonRegion))
+
+        AWSCredentials credentials = awsStaticCredentialsProvider.getCredentials();
+        return new AmazonSNSClient(credentials);
+
     }
 
 }
