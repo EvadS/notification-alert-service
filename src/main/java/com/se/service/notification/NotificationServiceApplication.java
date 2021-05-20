@@ -1,7 +1,10 @@
 package com.se.service.notification;
 
+import com.se.service.notification.configuration.NotificationProperties;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 /**
@@ -9,6 +12,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
  */
 @EnableJpaAuditing
 @SpringBootApplication
+@EnableConfigurationProperties({
+        NotificationProperties.class
+})
+
 public class NotificationServiceApplication  {
 
 
