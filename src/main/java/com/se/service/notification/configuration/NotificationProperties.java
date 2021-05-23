@@ -51,12 +51,4 @@ public class NotificationProperties {
     public void setHost(String host) {
         this.host = host;
     }
-
-
-
-    @PostConstruct
-    private  void init(){
-        System.out.printf("host in props :"+ host);
-    }
-
 }
