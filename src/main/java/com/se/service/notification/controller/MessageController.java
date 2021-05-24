@@ -27,6 +27,5 @@ public class MessageController {
     public ResponseEntity<?> sendMessage(@Valid @RequestBody SendNotificationRequest notificationRequest) {
         messageService.sendMessageByType(notificationRequest);
         return ResponseEntity.accepted().build();
-
     }
 }
