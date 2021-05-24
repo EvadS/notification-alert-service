@@ -1,6 +1,7 @@
 package com.se.service.notification.controller;
 
 
+import com.se.service.notification.NotificationConfiguration;
 import com.se.service.notification.component.SendGridMailerComponent;
 import com.se.service.notification.configuration.NotificationProperties;
 import com.se.service.notification.dao.entity.Notification;
@@ -17,10 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.*;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 
@@ -39,6 +43,7 @@ import static org.hamcrest.Matchers.notNullValue;
  */
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@EnableConfigurationProperties(NotificationConfiguration.class)
 public class MessageControllerTest {
 
 
@@ -93,6 +98,7 @@ public class MessageControllerTest {
         Mockito.when(sendGridMailerComponent.sendHtml("recipient","subject","html"))
                 .thenReturn(true);
     }
+
 
 
     @DisplayName("should work correct")
