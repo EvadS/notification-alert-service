@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -73,6 +74,6 @@ public class SesMailSenderComponent {
 
         SendEmailResult sendEmailResult = awsSesComponent.sendEmail(request);
         logger.debug("Email with subject: {} has been sent. Message id: {}", subject, sendEmailResult.getMessageId());
-        return true;
+        return !StringUtils.isEmpty(sendEmailResult.getMessageId());
     }
 }

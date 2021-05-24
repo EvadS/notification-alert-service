@@ -83,4 +83,14 @@ public class Notification extends DateAudit {
     public void setNotificationGroup(NotificationGroup notificationGroup) {
         this.notificationGroup = notificationGroup;
     }
+
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", enabled=" + enabled +
+                ", htmlPart='" + htmlPart + '\'' +
+                '}';
+    }
 }

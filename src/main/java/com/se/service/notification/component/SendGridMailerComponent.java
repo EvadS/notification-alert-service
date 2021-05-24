@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.http.HttpStatusCode;
 
 import java.io.IOException;
 
@@ -26,7 +27,7 @@ public class SendGridMailerComponent {
     private String sendGridEmailFrom;
 
 
-    public void sendHtml(String recipient, String subject, String htmlBody) throws IOException {
+    public boolean sendHtml(String recipient, String subject, String htmlBody) throws IOException {
         Email from = new Email(sendGridEmailFrom);
 
         Email to = new Email(recipient);
@@ -42,5 +43,9 @@ public class SendGridMailerComponent {
 
         logger.debug("Status code:{}, response body:{}",
                 response.getStatusCode(), response.getBody());
+
+        return  response.getStatusCode()==(HttpStatusCode.ACCEPTED);
+//        return  response.getStatusCode();
+       // return true;
     }
 }

@@ -52,6 +52,7 @@ public class TemplateBuilderServiceImpl implements TemplateBuilderService {
             // SkiEA  this situation checked before when we got template from data base
             throw new NotFoundException(e.getLocalizedMessage());
         } catch (TemplateException e) {
+            logger.error("Template binding exception:", e.getMessage());
             throw new BindTemplateException(e.getBlamedExpressionString());
         }
     }

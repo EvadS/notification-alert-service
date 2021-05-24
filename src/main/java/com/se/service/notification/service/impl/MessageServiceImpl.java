@@ -43,7 +43,7 @@ public class MessageServiceImpl implements MessageService {
         String messageBody = templateService.bindTemplate(notification.getHtmlPart(), notificationRequest.getPlaceholdersMap());
 
         for (DestinationAddressAlertType destinationAddress : notificationRequest.getDestinationAddressList()) {
-            //TODO: correct
+
             NotificationAlertsStrategy alertsStrategy =
                     alertsFactory.findStrategy(destinationAddress.getAlertType());
 
