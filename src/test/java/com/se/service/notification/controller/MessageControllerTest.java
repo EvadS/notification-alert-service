@@ -2,6 +2,7 @@ package com.se.service.notification.controller;
 
 
 import com.se.service.notification.component.SendGridMailerComponent;
+import com.se.service.notification.configuration.NotificationProperties;
 import com.se.service.notification.dao.entity.Notification;
 import com.se.service.notification.dao.entity.NotificationGroup;
 import com.se.service.notification.dao.entity.TemplateVariable;
