@@ -140,16 +140,16 @@
 
     <build>
 
-        <!-- uncomment to remove application properties from resulted jar-->
-<!--        <resources>-->
-<!--            <resource>-->
-<!--                <directory>src/main/resources</directory>-->
-<!--                <filtering>true</filtering>-->
-<!--                <excludes>-->
-<!--                    <exclude>**/conf.properties</exclude>-->
-<!--                </excludes>-->
-<!--            </resource>-->
-<!--        </resources>-->
+<!--         uncomment to remove application properties from resulted jar-->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>**/conf.properties</exclude>
+                </excludes>
+            </resource>
+        </resources>
 
         <plugins>
             <plugin>

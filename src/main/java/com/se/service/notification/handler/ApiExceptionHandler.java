@@ -109,7 +109,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     //TODO:  THIS SHOUllDN'T HAPPEN!!!!. NEED TO CHECK PROGRAMMING
     @ExceptionHandler({
             ConstraintViolationException.class,
-            AlreadyExistException.class, IncorrectTemplateException.class
+            AlreadyExistException.class, IncorrectTemplateException.class, BindTemplateException.class
     })
     public ResponseEntity<Object> handleBadRequest(Exception ex, WebRequest request) {
         final String bodyOfResponse = "This should be application specific";
@@ -159,7 +159,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(exception, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    @ExceptionHandler({RuntimeException.class, BindTemplateException.class})
+    @ExceptionHandler({RuntimeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> handleAllUncaughtException(
             RuntimeException exception,
