@@ -74,12 +74,16 @@ public class NotificationController {
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "Delete Notification",
+            notes = "Delete Notification by unique identifoer")
     public ResponseEntity<?> deleteNotificationItem(@PathVariable(value = "id") @NotNull Long id){
         notificationService.deleteNotificationItem(id);
         return  ResponseEntity.accepted().build();
     }
 
     @GetMapping(value = "/list", produces = "application/json")
+    @ApiOperation(value = "Current Notification",
+            notes = "Paged available notifications")
     public ResponseEntity<Page<NotificationResponse>> pagedTemplateList(
             @Min(value = 0, message = "Paged list started from zero index")
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -95,6 +99,8 @@ public class NotificationController {
         return ResponseEntity.ok(pagedTemplateResponse);
     }
 
+    @ApiOperation(value = "Alert types ",
+            notes = "Change alert type status by notifications")
     @PostMapping("/alert-types")
     public  ResponseEntity<NotificationItemTypeResponse> setAlertTypeStatus(@Valid @RequestBody NotificationTypeRequest notificationRequest){
         NotificationItemTypeResponse notificationItemTypeResponse =
@@ -103,6 +109,8 @@ public class NotificationController {
         return  ResponseEntity.ok(notificationItemTypeResponse);
     }
 
+    @ApiOperation(value = "Set alert types ",
+            notes = "Set available alert status by notification unique identifier")
     @GetMapping("/alert-types/{notification-item-id}")
     public  ResponseEntity<NotificationItemTypeResponse> getAlertType(@PathVariable(value = "notification-item-id") @NotNull Long notificationId){
         NotificationItemTypeResponse notificationItemTypeResponse = notificationService.getNotificationAlertTypes(notificationId);

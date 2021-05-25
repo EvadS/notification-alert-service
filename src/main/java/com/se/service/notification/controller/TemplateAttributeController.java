@@ -29,7 +29,7 @@ public class TemplateAttributeController {
 
     @GetMapping("/{id}")
     @ApiOperation(value = "Template attribute details",
-            notes = "Template attribute details by id", tags = {})
+            notes = "Get template attribute details by unique identifier", tags = {})
     ResponseEntity getTemplateAttribute(@PathVariable(value = "id") @NotNull Long id) {
         TemplateAttributeResponse templateAttributeResponse = templateService.getTemplateAttribute(id);
         return ResponseEntity.ok(templateAttributeResponse);

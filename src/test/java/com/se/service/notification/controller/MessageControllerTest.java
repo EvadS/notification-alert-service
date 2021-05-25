@@ -1,6 +1,7 @@
 package com.se.service.notification.controller;
 
 
+import com.se.service.notification.NotificationConfiguration;
 import com.se.service.notification.component.SendGridMailerComponent;
 import com.se.service.notification.dao.entity.Notification;
 import com.se.service.notification.dao.entity.NotificationGroup;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -23,6 +25,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.*;
+import org.springframework.test.context.support.TestPropertySourceUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,6 +38,7 @@ import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 
 /**
  * Created by Evgeniy Skiba
@@ -45,15 +52,16 @@ public class MessageControllerTest {
 
     public static final long NOT_EXISTS_NOTIFICATION_ID = 1000L;
 
-
     public static final String DEFAULT_RECIPIENT = "evad.se.dev@gmail.com";
     public static final String postUrl = "/message/send";
     @MockBean
     TemplateVariablesRepository mockTemplateVariablesRepository;
     @MockBean
     SendGridMailerComponent sendGridMailerComponent;
+
     @LocalServerPort
     private int port;
+
     @Autowired
     private TestRestTemplate restTemplate;
     @MockBean
