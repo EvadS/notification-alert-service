@@ -27,15 +27,14 @@ public class EmailAlertStrategy implements NotificationAlertsStrategy {
     private final static Logger logger = LoggerFactory.getLogger(EmailAlertStrategy.class);
     private final SesMailSenderComponent sesMailSenderComponent;
     private final SendGridMailerComponent sendGridMailerComponent;
-    private final AmazonSimpleEmailService emailService;
+
 
     public EmailAlertStrategy(NotificationProperties notificationProperties, SesMailSenderComponent sesMailSenderComponent,
-                              SendGridMailerComponent sendGridMailerComponent,
-                              AmazonSimpleEmailService emailService) {
+                              SendGridMailerComponent sendGridMailerComponent                             ) {
         this.notificationProperties = notificationProperties;
         this.sesMailSenderComponent = sesMailSenderComponent;
         this.sendGridMailerComponent = sendGridMailerComponent;
-        this.emailService = emailService;
+
     }
 
 

@@ -28,21 +28,8 @@ public class BeansConfiguration {
     @Value("${amazon.region}")
     private String amazonRegion;
 
-    AWSCredentialsProvider awsCreds = new ClasspathPropertiesFileCredentialsProvider();
 
-    @Bean
-    @Primary
-    public AmazonSimpleEmailService amazonEmailClient() {
-         AmazonSimpleEmailService awsSes = AmazonSimpleEmailServiceClientBuilder.standard()
-                .withCredentials(
-                        new AWSStaticCredentialsProvider(
-                                new BasicAWSCredentials(
-                                        amazonAccessKey, amazonSecretKey)))
-                .withRegion(Regions.fromName(amazonRegion))
-                .build();
 
-        return awsSes;
-    }
 
     // TODO: use builder
     @Bean

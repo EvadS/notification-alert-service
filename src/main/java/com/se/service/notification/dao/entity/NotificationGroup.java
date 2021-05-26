@@ -7,13 +7,14 @@ import javax.validation.constraints.NotNull;
 /**
  * Created by Evgeniy Skiba
  */
-@Entity(name = "NotificationGroup")
+@Entity
 @Table(name = "notification_group")
 public class NotificationGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name = "id", nullable = false, updatable = false)
+    private Long id;
 
     @NotBlank
     @Column(name = "name", columnDefinition = "text")
@@ -35,11 +36,11 @@ public class NotificationGroup {
         this.enabled = enabled;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
