@@ -5,6 +5,7 @@ import com.se.service.notification.dao.entity.NotificationGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,5 +17,5 @@ public interface NotificationGroupRepository extends JpaRepository<NotificationG
 
     boolean existsById(Long id);
 
-    Optional<NotificationGroup> findAllByName(String groupName);
+    List<NotificationGroup> findAllByName(String groupName);
 }

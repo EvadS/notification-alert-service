@@ -11,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.net.URI;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,6 +34,7 @@ class NotificationGroupControllerTest {
 
     public static final long DEFAULT_NOTIFICATION_ID = 1L;
     public static final String postUrl = "/notification-group";
+    public static final String putUrl = "/notification-group";
 
 //    @MockBean
 //    private NotificationGroupRepository mockNotificationGroup;
@@ -43,6 +42,7 @@ class NotificationGroupControllerTest {
     private TestRestTemplate restTemplate;
     @Autowired
     private NotificationGroupRepository notificationGroupRepository;
+
     @LocalServerPort
     private int port;
 
@@ -59,12 +59,12 @@ class NotificationGroupControllerTest {
     }
 
 
+    /// test autowired jpa is work correct
     @Test
     public void givenGenericEntityRepository_whenSaveAndRetreiveEntity_thenOK() {
 
         NotificationGroup notificationGroup = new NotificationGroup("test", true);
         NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
-
 
         Long generatedId = genericEntity.getId();
         NotificationGroup foundEntity = notificationGroupRepository.getOne(generatedId);
@@ -84,6 +84,7 @@ class NotificationGroupControllerTest {
                 "http://localhost:" + port + "/" + postUrl,
                 notificationRequest,
                 Object.class);
+
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
     }
 
@@ -104,6 +105,10 @@ class NotificationGroupControllerTest {
 
     @Test
     public void create_notification_group_already_exists() {
+
+        NotificationGroup notificationGroup = new NotificationGroup("test", true);
+        notificationGroupRepository.save(notificationGroup);
+
         NotificationGroupRequest notificationRequest = new NotificationGroupRequest();
         notificationRequest.setEnabled(false);
         HttpHeaders headers = new HttpHeaders();
@@ -118,21 +123,72 @@ class NotificationGroupControllerTest {
     }
 
 
+    @Test
+    public void update_notification_group_success() {
+        notificationGroupRepository.deleteAllInBatch();
+
+        NotificationGroup notificationGroup = new NotificationGroup("test", true);
+        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
+
+        NotificationGroupRequest notificationRequest = new NotificationGroupRequest("test2", true);
+
+        ResponseEntity<Object> response = restTemplate.exchange(
+                "http://localhost:" + port + "/" + putUrl + "/" + genericEntity.getId(),
+                HttpMethod.PUT,
+                new HttpEntity<>(notificationRequest),
+                Object.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+
+        notificationGroupRepository.deleteAllInBatch();
+    }
+
+
     //Put mapping
     @Test
-    public void update_notification_group_not_suscess() {
+    public void update_notification_group_not_success() {
+        notificationGroupRepository.deleteAllInBatch();
+
+        NotificationGroup notificationGroup = new NotificationGroup("test", true);
+        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
+
+        NotificationGroupRequest notificationRequest = new NotificationGroupRequest();
+        notificationRequest.setEnabled(false);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        ResponseEntity<Object> response = restTemplate.exchange(
+                "http://localhost:" + port + "/" + putUrl + "/" + genericEntity.getId(),
+                HttpMethod.PUT,
+                new HttpEntity<>(notificationRequest),
+                Object.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
+
+        notificationGroupRepository.deleteAllInBatch();
 
     }
 
     @Test
     public void update_notification_group_not_found() {
+        Long incorrectID = 1000L;
+        NotificationGroup notificationGroup = new NotificationGroup("test", true);
+        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
 
+        NotificationGroupRequest notificationRequest = new NotificationGroupRequest("test2", true);
+
+        ResponseEntity<Object> response = restTemplate.exchange(
+                "http://localhost:" + port + "/" + putUrl + "/" + incorrectID,
+                HttpMethod.PUT,
+                new HttpEntity<>(notificationRequest),
+                Object.class);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
+
+        notificationGroupRepository.deleteAllInBatch();
     }
 
-    @Test
-    public void update_notification_group_validation_error() {
 
-    }
 
     //Delete mapping
     @Test

@@ -1,9 +1,13 @@
 package com.se.service.notification.controller;
 
+import com.se.service.notification.handler.model.ErrorResponse;
 import com.se.service.notification.model.request.NotificationGroupRequest;
 import com.se.service.notification.model.response.NotificationGroupResponse;
 import com.se.service.notification.service.NotificationService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +28,15 @@ public class NotificationGroupController {
         this.notificationService = notificationService;
     }
 
-    @ApiOperation(value = "notification group.",
+
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved created notification group",
+                    response = NotificationGroupResponse.class),
+            @ApiResponse(code = 422, message = "Incorrect model to create notification group"),
+            @ApiResponse(code = 404, message = "HTTP_NOT_FOUND_MESSAGE", response = ErrorResponse.class),
+
+    })
+            @ApiOperation(value = "notification group.",
             notes = "Create notification group")
     @PostMapping
     public ResponseEntity<NotificationGroupResponse> create(@Valid @RequestBody NotificationGroupRequest request) {
@@ -40,6 +52,8 @@ public class NotificationGroupController {
         return ResponseEntity.ok(notificationResponse);
     }
 
+
+    // @ApiResponse(code = 404, message = "Indicates the requested task was not found.")
     @ApiOperation(value = "Change notification group status.",
             notes = "Change notification group status [enabled/disabled] by unique identifier")
     @GetMapping("/status/{id}/{status}")
