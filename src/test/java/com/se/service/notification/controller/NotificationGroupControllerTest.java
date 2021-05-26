@@ -4,7 +4,8 @@ import com.se.service.notification.NotificationServiceApplication;
 import com.se.service.notification.dao.entity.NotificationGroup;
 import com.se.service.notification.dao.repository.NotificationGroupRepository;
 import com.se.service.notification.model.request.NotificationGroupRequest;
-import org.junit.jupiter.api.BeforeEach;
+import com.se.service.notification.model.response.NotificationGroupResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,12 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
-import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -35,31 +37,21 @@ class NotificationGroupControllerTest {
     public static final long DEFAULT_NOTIFICATION_ID = 1L;
     public static final String postUrl = "/notification-group";
     public static final String putUrl = "/notification-group";
+    public static final String getByIdUrl = "/notification-group";
+    public static final String deleteUrl = "/notification-group";
+    public static final String changeStatusUrl = "/status/{id}/{status}";
+    public static final String DEFAULT_BASE_NAME = "name";
+    public static final boolean DEFAULT_GROUP_ENABLED = true;
 
-//    @MockBean
-//    private NotificationGroupRepository mockNotificationGroup;
     @Autowired
     private TestRestTemplate restTemplate;
+
     @Autowired
     private NotificationGroupRepository notificationGroupRepository;
 
     @LocalServerPort
     private int port;
 
-    @BeforeEach
-    public void setUp() throws IOException {
-        // Notification group block
-//        NotificationGroup notificationGroup = new NotificationGroup();
-//        notificationGroup.setId(1L);
-//        notificationGroup.setEnabled(true);
-//        notificationGroup.setName("Notification group name");
-//
-//        Mockito.when(this.mockNotificationGroup.findById(DEFAULT_NOTIFICATION_ID))
-//                .thenReturn(Optional.of(notificationGroup));
-    }
-
-
-    /// test autowired jpa is work correct
     @Test
     public void givenGenericEntityRepository_whenSaveAndRetreiveEntity_thenOK() {
 
@@ -73,44 +65,58 @@ class NotificationGroupControllerTest {
         org.junit.jupiter.api.Assertions.assertEquals(genericEntity.getName(), foundEntity.getName());
     }
 
+    @DisplayName("create notification group 200")
     @Test
     public void should_create_notification_group_success() {
 
-        NotificationGroupRequest notificationRequest = new NotificationGroupRequest("name", true);
+        NotificationGroupRequest notificationRequest =
+                new NotificationGroupRequest(DEFAULT_BASE_NAME, DEFAULT_GROUP_ENABLED);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        ResponseEntity<Object> response = restTemplate.postForEntity(
+        ResponseEntity<NotificationGroupResponse> response = restTemplate.postForEntity(
                 "http://localhost:" + port + "/" + postUrl,
                 notificationRequest,
-                Object.class);
+                NotificationGroupResponse.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertNotNull(response.getBody());
+        assertEquals(response.getBody().getName(), DEFAULT_BASE_NAME);
+        assertEquals(response.getBody().isStatus(), DEFAULT_GROUP_ENABLED);
     }
 
+    @DisplayName("create notification group 422")
     @Test
     public void should_create_notification_group_validation_error() {
-        NotificationGroupRequest notificationRequest = new NotificationGroupRequest();
-        notificationRequest.setEnabled(false);
+
+        String incorrectNotificationRequestType = "";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        ResponseEntity<Object> response = restTemplate.postForEntity(
+        ResponseEntity<NotificationGroupResponse> response = restTemplate.postForEntity(
                 "http://localhost:" + port + "/" + postUrl,
-                notificationRequest,
-                Object.class);
+                incorrectNotificationRequestType,
+                NotificationGroupResponse.class);
 
-        assertThat(response.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
+       assertThat(response.getStatusCode(), is(HttpStatus.UNSUPPORTED_MEDIA_TYPE));
+        assertNotNull(response.getBody());
+
     }
 
+    @DisplayName("create notification group 409")
     @Test
     public void create_notification_group_already_exists() {
 
-        NotificationGroup notificationGroup = new NotificationGroup("test", true);
+        notificationGroupRepository.deleteAllInBatch();
+
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, true);
         notificationGroupRepository.save(notificationGroup);
 
         NotificationGroupRequest notificationRequest = new NotificationGroupRequest();
+        notificationRequest.setName(DEFAULT_BASE_NAME);
         notificationRequest.setEnabled(false);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -119,7 +125,60 @@ class NotificationGroupControllerTest {
                 notificationRequest,
                 Object.class);
 
-        assertThat(response.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
+        assertThat(response.getStatusCode(), is(HttpStatus.CONFLICT));
+        assertNotNull(response.getBody());
+
+        notificationGroupRepository.deleteAllInBatch();
+    }
+
+    @DisplayName("delete notifciaction group correct")
+    @Test
+    public void should_delete_correct() {
+
+        notificationGroupRepository.deleteAllInBatch();
+
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, true);
+        NotificationGroup notificationGroupGenerated = notificationGroupRepository.save(notificationGroup);
+
+        NotificationGroupRequest notificationRequest = new NotificationGroupRequest();
+        notificationRequest.setName(DEFAULT_BASE_NAME);
+        notificationRequest.setEnabled(false);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("id", String.valueOf(notificationGroupGenerated.getId()));
+        restTemplate.delete(
+                "http://localhost:" + port + "/" + deleteUrl + "/" + notificationGroupGenerated.getId(),
+                HttpMethod.DELETE, params);
+
+        assertThat(notificationGroupRepository.findAll().size(), is(0));
+    }
+
+    @DisplayName("delete notifiaction group 404")
+    @Test
+    public void should_delete_not_found() {
+
+        notificationGroupRepository.deleteAllInBatch();
+
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, true);
+        NotificationGroup notificationGroupGenerated = notificationGroupRepository.save(notificationGroup);
+
+        NotificationGroupRequest notificationRequest = new NotificationGroupRequest();
+        notificationRequest.setName(DEFAULT_BASE_NAME);
+        notificationRequest.setEnabled(false);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String url = "http://localhost:" + port + "/" + deleteUrl + "/" +  1000;
+        ResponseEntity response = restTemplate.exchange(url, HttpMethod.DELETE, null, ResponseEntity.class);
+
+
+        assertThat(notificationGroupRepository.findAll().size(), is(1));
+        assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
+
     }
 
 
@@ -187,7 +246,6 @@ class NotificationGroupControllerTest {
 
         notificationGroupRepository.deleteAllInBatch();
     }
-
 
 
     //Delete mapping
