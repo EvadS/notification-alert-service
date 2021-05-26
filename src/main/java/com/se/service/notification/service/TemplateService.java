@@ -3,6 +3,7 @@ package com.se.service.notification.service;
 import com.se.service.notification.model.request.TemplateAttributeListRequest;
 import com.se.service.notification.model.request.TemplateAttributeRequest;
 import com.se.service.notification.model.response.TemplateAttributeResponse;
+import com.se.service.notification.model.response.TemplateAttributeResponseList;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface TemplateService {
 
     void deleteTemplateAttribute(Long id);
 
-    List<TemplateAttributeResponse> availableAttributeList();
+    TemplateAttributeResponseList availableAttributeList();
 
-    List<TemplateAttributeResponse> createTemplateAttributeByList(TemplateAttributeListRequest templateAttributeRequest);
+    TemplateAttributeResponseList createTemplateAttributeByList(TemplateAttributeListRequest templateAttributeRequest);
 }

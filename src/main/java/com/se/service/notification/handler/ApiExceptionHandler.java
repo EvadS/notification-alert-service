@@ -109,7 +109,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     //TODO:  THIS SHOUllDN'T HAPPEN!!!!. NEED TO CHECK PROGRAMMING
     @ExceptionHandler({
             ConstraintViolationException.class,
-            AlreadyExistException.class, IncorrectTemplateException.class, BindTemplateException.class
+            IncorrectTemplateException.class, BindTemplateException.class
     })
     public ResponseEntity<Object> handleBadRequest(Exception ex, WebRequest request) {
         final String bodyOfResponse = "This should be application specific";
@@ -135,13 +135,23 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     /**
      * Send a 409 Conflict in case of concurrent modification
      */
-    @ExceptionHandler({ObjectOptimisticLockingFailureException.class,
+    @ExceptionHandler({
+           ObjectOptimisticLockingFailureException.class,
             OptimisticLockingFailureException.class,
             DataIntegrityViolationException.class, NotificationGroupException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity handleConflict(Exception ex, WebRequest request) {
+    public ResponseEntity handleUnknownConflict(Exception ex, WebRequest request) {
         log.error("Conflict in case of concurrent modification", ex.getMessage());
         return buildErrorResponse(ex, "Unknown error occurred", HttpStatus.CONFLICT, request);
+    }
+
+    @ExceptionHandler({
+            AlreadyExistException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity handleConflict(Exception ex, WebRequest request) {
+        log.error("Conflict in case of concurrent modification", ex.getMessage());
+
+        return buildErrorResponse(ex, HttpStatus.CONFLICT, request);
     }
 
     // TODO: NotificationApiException

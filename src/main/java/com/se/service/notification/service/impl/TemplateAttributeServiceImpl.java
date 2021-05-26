@@ -8,11 +8,11 @@ import com.se.service.notification.model.mapper.TemplateAttributeMapper;
 import com.se.service.notification.model.request.TemplateAttributeListRequest;
 import com.se.service.notification.model.request.TemplateAttributeRequest;
 import com.se.service.notification.model.response.TemplateAttributeResponse;
+import com.se.service.notification.model.response.TemplateAttributeResponseList;
 import com.se.service.notification.service.TemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +35,8 @@ public class TemplateAttributeServiceImpl implements TemplateService {
 
     @Override
     public TemplateAttributeResponse getTemplateAttribute(Long id) {
-
         TemplateVariable templateVariable = templateVariablesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Template attribute", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Place holder", "id", id));
 
         return TemplateAttributeMapper.INSTANCE.templateVariableToResponse(templateVariable);
     }
@@ -46,7 +45,7 @@ public class TemplateAttributeServiceImpl implements TemplateService {
     public TemplateAttributeResponse createTemplateAttribute(TemplateAttributeRequest request) {
 
         if (templateVariablesRepository.existsByValue(request.getName())) {
-            throw new AlreadyExistException("Template Variable", "value", request.getName());
+            throw new AlreadyExistException("Place holder", "value", request.getName());
         }
 
         TemplateVariable templateVariable = new TemplateVariable(request.getName());
@@ -60,9 +59,9 @@ public class TemplateAttributeServiceImpl implements TemplateService {
 
         logger.debug("Update template attribute, id:{} request:{}", id, request);
         TemplateVariable templateVariable = templateVariablesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Template variable", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Place holder", "id", id));
 
-        boolean alreadyExistsInDataBase =templateVariablesRepository.existsByValue(request.getName());
+        boolean alreadyExistsInDataBase = templateVariablesRepository.existsByValue(request.getName());
         boolean isChanged = !templateVariable.getValue().equals(request.getName());
 
         if (isChanged) {
@@ -71,7 +70,7 @@ public class TemplateAttributeServiceImpl implements TemplateService {
                 templateVariablesRepository.save(templateVariable);
 
             } else {
-                throw new AlreadyExistException("Template Variable", "value", request.getName());
+                throw new AlreadyExistException("Place holder", "value", request.getName());
             }
         }
 
@@ -83,20 +82,27 @@ public class TemplateAttributeServiceImpl implements TemplateService {
         logger.debug("Delete template attribute, id:{} ", id);
 
         TemplateVariable templateVariable = templateVariablesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Template variable", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException("Place holder", "id", id));
 
         templateVariablesRepository.delete(templateVariable);
     }
 
     @Override
-    public List<TemplateAttributeResponse> availableAttributeList() {
-        return templateVariablesRepository.findAll().stream()
+    public TemplateAttributeResponseList availableAttributeList() {
+        TemplateAttributeResponseList templateAttributeResponseList = new TemplateAttributeResponseList();
+
+        List<TemplateAttributeResponse> attributeResponseList = templateVariablesRepository.findAll().stream()
                 .map(TemplateAttributeMapper.INSTANCE::templateVariableToResponse)
                 .collect(Collectors.toList());
+
+        templateAttributeResponseList.setResponseList(attributeResponseList);
+
+        return templateAttributeResponseList;
+
     }
 
     @Override
-    public List<TemplateAttributeResponse> createTemplateAttributeByList(TemplateAttributeListRequest templateAttributeRequest) {
+    public TemplateAttributeResponseList createTemplateAttributeByList(TemplateAttributeListRequest templateAttributeRequest) {
 
         List<TemplateAttributeResponse> responseList = new ArrayList<>();
 
@@ -110,6 +116,6 @@ public class TemplateAttributeServiceImpl implements TemplateService {
             }
         });
 
-        return responseList;
+        return new TemplateAttributeResponseList(responseList);
     }
 }
