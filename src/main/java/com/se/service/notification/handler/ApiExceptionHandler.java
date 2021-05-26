@@ -37,8 +37,12 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
-    public static final String TRACE = "trace";
     private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
+
+    public static final String TRACE = "trace";
+    public static final String UNKNOWN_ERROR_OCCURRED = "Unknown error occurred";
+    public static final String COMMUNICATION_ERROR_OCCURRED = "Communication error occurred";
+    public static final String CONFLICT_MESSAGE = "Conflict in case of concurrent modification";
 
     @Value("${reflectoring.trace:false}")
     private boolean printStackTrace;
@@ -91,7 +95,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     /*******************************************************
      *  NOT FOUND BLOCK
      */
-
     @ExceptionHandler({ResourceNotFoundException.class,
             ResourceNotFoundException.class,
             NotFoundException.class})
@@ -102,23 +105,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /*******************************************************
-     * BAD REQUEST BLOCK
+     * 400 BAD REQUEST BLOCK
      */
-
-    // 400
-    //TODO:  THIS SHOUllDN'T HAPPEN!!!!. NEED TO CHECK PROGRAMMING
     @ExceptionHandler({
             ConstraintViolationException.class,
             IncorrectTemplateException.class, BindTemplateException.class
     })
     public ResponseEntity<Object> handleBadRequest(Exception ex, WebRequest request) {
-        final String bodyOfResponse = "This should be application specific";
-
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
     }
-
-
-    // <--  block custom exception
 
 
     /**
@@ -129,43 +124,41 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleMiscFailures(Throwable t, WebRequest request) {
         log.error("Unknown error occurred", t);
-        return buildErrorResponse(new Exception(t), "Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return buildErrorResponse(new Exception(t), UNKNOWN_ERROR_OCCURRED, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     /**
      * Send a 409 Conflict in case of concurrent modification
      */
     @ExceptionHandler({
-           ObjectOptimisticLockingFailureException.class,
+            ObjectOptimisticLockingFailureException.class,
             OptimisticLockingFailureException.class,
             DataIntegrityViolationException.class, NotificationGroupException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity handleUnknownConflict(Exception ex, WebRequest request) {
-        log.error("Conflict in case of concurrent modification", ex.getMessage());
-        return buildErrorResponse(ex, "Unknown error occurred", HttpStatus.CONFLICT, request);
+        log.error("Conflict in case of concurrent modification, {}", ex.getMessage());
+        return buildErrorResponse(ex, UNKNOWN_ERROR_OCCURRED, HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler({
             AlreadyExistException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity handleConflict(Exception ex, WebRequest request) {
-        log.error("Conflict in case of concurrent modification", ex.getMessage());
+        log.error(CONFLICT_MESSAGE , ex.getMessage());
 
         return buildErrorResponse(ex, HttpStatus.CONFLICT, request);
     }
 
-    // TODO: NotificationApiException
+
     /**
      * Catch all for any other exceptions...
      */
-
     @ExceptionHandler({UserComponentException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> handleCustomServerErrorException(
             RuntimeException exception,
-            WebRequest request
-    ) {
-        log.error("Communication error occurred", exception);
+            WebRequest request) {
+        log.error(COMMUNICATION_ERROR_OCCURRED, exception);
         return buildErrorResponse(exception, exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
@@ -173,18 +166,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> handleAllUncaughtException(
             RuntimeException exception,
-            WebRequest request
-    ) {
-        log.error("Unknown error occurred", exception);
-        return buildErrorResponse(exception, "Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, request);
+            WebRequest request) {
+        log.error("Unknown error occurred, {}", exception);
+        return buildErrorResponse(exception, UNKNOWN_ERROR_OCCURRED, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    // TODO: not tested
     @ExceptionHandler({Exception.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<?> handleAnyException(Exception e, WebRequest request) {
-        log.error("Unknown error occurred", e);
-        return buildErrorResponse(e, "Unknown error occurred", HttpStatus.INTERNAL_SERVER_ERROR, request);
+    public ResponseEntity handleAnyException(Exception e, WebRequest request) {
+        log.error("Unknown error occurred, {}", e);
+        return buildErrorResponse(e, UNKNOWN_ERROR_OCCURRED, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
     @Override

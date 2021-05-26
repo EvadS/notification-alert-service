@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.CONFLICT)
 public class NotificationGroupException extends RuntimeException {
 
-    private String resourceName;
+    private final String resourceName;
 
 
     public NotificationGroupException(String resourceName) {
-        super(String.format("Can't change %s. There is exists child resource",  resourceName ));
+        super(String.format("Can't change %s. There is exists child resource", resourceName));
         this.resourceName = resourceName;
 
     }

@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 
 @Repository
-public interface TemplateVariablesRepository  extends JpaRepository<TemplateVariable, Long> {
+public interface TemplateVariablesRepository extends JpaRepository<TemplateVariable, Long> {
     boolean existsByValue(String name);
 
     Optional<TemplateVariable> findByValue(String value);

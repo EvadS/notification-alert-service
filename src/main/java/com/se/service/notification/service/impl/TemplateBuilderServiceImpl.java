@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 public class TemplateBuilderServiceImpl implements TemplateBuilderService {
 
     private final static Logger logger = LoggerFactory.getLogger(TemplateBuilderServiceImpl.class);
+    public static final String TEMPLATE_NAME = "templateName";
 
     private final Configuration freemarkerConfiguration;
     private final TemplateVariablesRepository templateVariablesRepository;
@@ -44,7 +45,7 @@ public class TemplateBuilderServiceImpl implements TemplateBuilderService {
     @Override
     public String bindTemplate(String templateBody, Map<String, String> templateModel) {
         try {
-            Template template = new Template("templateName", new StringReader(templateBody), freemarkerConfiguration);
+            Template template = new Template(TEMPLATE_NAME, new StringReader(templateBody), freemarkerConfiguration);
             String bindTemplate = FreeMarkerTemplateUtils.processTemplateIntoString(template, templateModel);
 
             return bindTemplate;
@@ -52,7 +53,7 @@ public class TemplateBuilderServiceImpl implements TemplateBuilderService {
             // SkiEA  this situation checked before when we got template from data base
             throw new NotFoundException(e.getLocalizedMessage());
         } catch (TemplateException e) {
-            logger.error("Template binding exception:", e.getMessage());
+            logger.error("Template binding exception: {}", e.getMessage());
             throw new BindTemplateException(e.getBlamedExpressionString());
         }
     }

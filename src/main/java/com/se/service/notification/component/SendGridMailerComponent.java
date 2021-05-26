@@ -18,7 +18,7 @@ import java.io.IOException;
 @Component
 public class SendGridMailerComponent {
 
-    private final static Logger logger = LoggerFactory.getLogger(SendGridMailerComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(SendGridMailerComponent.class);
 
     @Value("${spring.sendgrid.api-key}")
     private String apiKey;
@@ -44,8 +44,6 @@ public class SendGridMailerComponent {
         logger.debug("Status code:{}, response body:{}",
                 response.getStatusCode(), response.getBody());
 
-        return  response.getStatusCode()==(HttpStatusCode.ACCEPTED);
-//        return  response.getStatusCode();
-       // return true;
+        return response.getStatusCode() == (HttpStatusCode.ACCEPTED);
     }
 }

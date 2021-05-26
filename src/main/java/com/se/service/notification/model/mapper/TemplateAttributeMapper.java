@@ -10,7 +10,6 @@ import org.mapstruct.factory.Mappers;
 /**
  * Created by Evgeniy Skiba
  */
-
 @Mapper
 public interface TemplateAttributeMapper {
 

@@ -1,11 +1,8 @@
 package com.se.service.notification.component;
 
-import com.amazonaws.services.simpleemail.model.MailFromDomainNotVerifiedException;
-import com.amazonaws.services.simpleemail.model.MessageRejectedException;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
-import com.amazonaws.services.sns.model.PublishResult;
 import com.se.service.notification.model.NotificationModel;
 import org.springframework.stereotype.Component;
 
@@ -25,15 +22,13 @@ public class SnsSenderComponent {
     }
 
 
-    public boolean sendNotification(NotificationModel notificationModel)
-            throws MailFromDomainNotVerifiedException, MessageRejectedException {
+    public boolean sendNotification(NotificationModel notificationModel) {
 
         String message = notificationModel.getHtmlBody();
         String phoneNumber = notificationModel.getRecipient();
-        Map<String, MessageAttributeValue> smsAttributes =
-                new HashMap<String, MessageAttributeValue>();
+        Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
 
-        PublishResult result = awsSnsClient.publish(new PublishRequest()
+        awsSnsClient.publish(new PublishRequest()
                 .withMessage(message)
                 .withPhoneNumber(phoneNumber)
                 .withMessageAttributes(smsAttributes));

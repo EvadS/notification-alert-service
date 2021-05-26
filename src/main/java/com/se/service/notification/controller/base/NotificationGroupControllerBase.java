@@ -80,7 +80,7 @@ public interface NotificationGroupControllerBase {
     })
     @ApiOperation(value = "Delete notification group",
             notes = "Delete notification group by unique identifier")
-    ResponseEntity<?> deleteNotificationGroup(
+    ResponseEntity deleteNotificationGroup(
             @ApiParam(value = "notification group unique identifier", required = true, example = "1")
             @PathVariable(value = "id") @NotNull Long id);
 }

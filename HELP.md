@@ -6,3 +6,9 @@ to build
 	 mvn package spring-boot:repackage
 ```
 
+check with sonar
+```bash
+mvn clean install & sonar:sonar
+
+```
+

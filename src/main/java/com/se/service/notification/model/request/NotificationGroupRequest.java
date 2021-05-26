@@ -18,7 +18,7 @@ public class NotificationGroupRequest {
     @NotBlank(message = "Notification group name is required field")
     private String name;
 
-    @ApiModelProperty(value = "Notification Group status",
+    @ApiModelProperty(value = "Notification group status",
             notes = "Provide new group status [enabled/disabled]",
             required = true, dataType = "boolean")
     private boolean enabled;

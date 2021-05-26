@@ -1,6 +1,5 @@
 package com.se.service.notification.controller;
 
-import com.se.service.notification.controller.base.TemplateAttributeControllerBase;
 import com.se.service.notification.handler.model.ErrorResponse;
 import com.se.service.notification.model.request.TemplateAttributeListRequest;
 import com.se.service.notification.model.request.TemplateAttributeRequest;
@@ -21,7 +20,7 @@ import javax.validation.constraints.NotNull;
 @RestController
 @RequestMapping("/template-attribute")
 @Api(value = "Template attributes management api")
-public class TemplateAttributeController implements TemplateAttributeControllerBase {
+public class TemplateAttributeController {
 
     private final TemplateService templateService;
 
@@ -39,10 +38,24 @@ public class TemplateAttributeController implements TemplateAttributeControllerB
     @GetMapping("/{id}")
     @ApiOperation(value = "Template attribute details",
             notes = "Get template attribute details by unique identifier")
-    ResponseEntity<TemplateAttributeResponse> getTemplateAttribute(
+    public ResponseEntity<TemplateAttributeResponse> getTemplateAttribute(
             @ApiParam(value = "Place holder unique identifier", required = true, example = "1")
             @PathVariable(value = "id") @NotNull Long id) {
         TemplateAttributeResponse templateAttributeResponse = templateService.getTemplateAttribute(id);
+        return ResponseEntity.ok(templateAttributeResponse);
+    }
+
+    @PostMapping
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully created template attribute model",
+                    response = TemplateAttributeResponse.class),
+            @ApiResponse(code = 409, message = "Incorrect template attribute name to create", response = ErrorResponse.class),
+            @ApiResponse(code = 422, message = "Incorrect model to create template attribute", response = ErrorResponse.class),
+    })
+    @ApiOperation(value = "Create one attribute.", notes = "Create one template placeholder.")
+    public ResponseEntity<TemplateAttributeResponse> createAttributeTemplate(
+            @Valid @RequestBody TemplateAttributeRequest templateAttributeRequest) {
+        TemplateAttributeResponse templateAttributeResponse = templateService.createTemplateAttribute(templateAttributeRequest);
         return ResponseEntity.ok(templateAttributeResponse);
     }
 
@@ -55,23 +68,9 @@ public class TemplateAttributeController implements TemplateAttributeControllerB
     @PostMapping("/create-by-list")
     @ApiOperation(value = "Create template place holders",
             notes = "Create place holders from list with attributes")
-    ResponseEntity<TemplateAttributeResponseList> createAttributeTemplateByList(
+    public ResponseEntity<TemplateAttributeResponseList> createAttributeTemplateByList(
             @Valid @RequestBody TemplateAttributeListRequest templateAttributeRequest) {
         TemplateAttributeResponseList templateAttributeResponse = templateService.createTemplateAttributeByList(templateAttributeRequest);
-        return ResponseEntity.ok(templateAttributeResponse);
-    }
-
-    @PostMapping
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully created template attribute model",
-                    response = TemplateAttributeResponse.class),
-            @ApiResponse(code = 409, message = "Incorrect template attribute name to create", response = ErrorResponse.class),
-            @ApiResponse(code = 422, message = "Incorrect model to create template attribute", response = ErrorResponse.class),
-    })
-      @ApiOperation(value = "Create one attribute.", notes = "Create one template placeholder.")
-    ResponseEntity<TemplateAttributeResponse> createAttributeTemplate(
-            @Valid @RequestBody TemplateAttributeRequest templateAttributeRequest) {
-        TemplateAttributeResponse templateAttributeResponse = templateService.createTemplateAttribute(templateAttributeRequest);
         return ResponseEntity.ok(templateAttributeResponse);
     }
 
@@ -86,7 +85,7 @@ public class TemplateAttributeController implements TemplateAttributeControllerB
     @PutMapping("/{id}")
     @ApiOperation(value = "Update attribute.",
             notes = "Update attribute by request model and uniques template attribute id.")
-    ResponseEntity<TemplateAttributeResponse> updateTemplateAttribute(
+    public ResponseEntity<TemplateAttributeResponse> updateTemplateAttribute(
             @ApiParam(value = "unique identifier", required = true, example = "1")
             @PathVariable(value = "id") @NotNull Long id,
             @RequestBody @Valid TemplateAttributeRequest templateAttributeRequest) {
@@ -102,7 +101,7 @@ public class TemplateAttributeController implements TemplateAttributeControllerB
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete attribute.", nickname = "delete",
             notes = "Delete template attribute")
-    ResponseEntity deleteTemplateAttribute(
+    public ResponseEntity deleteTemplateAttribute(
             @ApiParam(value = "unique identifier", required = true, example = "1")
             @PathVariable(value = "id") @NotNull Long id) {
         templateService.deleteTemplateAttribute(id);
@@ -116,7 +115,7 @@ public class TemplateAttributeController implements TemplateAttributeControllerB
     @GetMapping(value = "/list", produces = "application/json")
     @ApiOperation(value = "Template attributes", nickname = "list",
             notes = "The current attributes list")
-    ResponseEntity<TemplateAttributeResponseList> pagedTemplateList() {
+    public ResponseEntity<TemplateAttributeResponseList> pagedTemplateList() {
         TemplateAttributeResponseList templateAttributeList = templateService.availableAttributeList();
         return ResponseEntity.ok(templateAttributeList);
     }

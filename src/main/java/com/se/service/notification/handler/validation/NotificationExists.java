@@ -1,7 +1,6 @@
 package com.se.service.notification.handler.validation;
 
 import com.se.service.notification.handler.validation.impl.NotificationExistsValidator;
-import com.se.service.notification.handler.validation.impl.NotificationGroupExistsValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

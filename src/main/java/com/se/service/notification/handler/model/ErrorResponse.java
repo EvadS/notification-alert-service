@@ -2,6 +2,7 @@ package com.se.service.notification.handler.model;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.Objects;
 /**
  * Created by Evgeniy Skiba
  */
+@ApiModel(value = "ErrorResponse",
+        description = "Provide Error Response")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
     private final int status;

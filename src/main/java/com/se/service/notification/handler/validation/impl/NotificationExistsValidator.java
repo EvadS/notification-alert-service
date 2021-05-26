@@ -1,9 +1,7 @@
 package com.se.service.notification.handler.validation.impl;
 
-import com.se.service.notification.dao.repository.NotificationGroupRepository;
 import com.se.service.notification.dao.repository.NotificationRepository;
 import com.se.service.notification.handler.validation.NotificationExists;
-import com.se.service.notification.handler.validation.NotificationGroupExists;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

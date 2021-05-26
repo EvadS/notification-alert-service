@@ -251,7 +251,6 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public NotificationItemTypeResponse getNotificationAlertTypes(Long notificationId) {
 
-
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Notification Item", "id", notificationId));
 
@@ -263,7 +262,7 @@ public class NotificationServiceImpl implements NotificationService {
 
         NotificationItemTypeResponse notificationItemTypeResponse = new NotificationItemTypeResponse();
         notificationItemTypeResponse.setNotificationItemTypeItemResponseList(notificationItemTypeItemResponseList);
-        notificationItemTypeResponse.setNotificationITemId(notification.getId());
+        notificationItemTypeResponse.setNotificationItemId(notification.getId());
 
 
         return notificationItemTypeResponse;

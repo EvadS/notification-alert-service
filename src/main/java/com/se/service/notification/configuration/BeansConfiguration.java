@@ -25,24 +25,17 @@ public class BeansConfiguration {
     private String amazonAccessKey;
     @Value("${amazon.secret.key}")
     private String amazonSecretKey;
-    @Value("${amazon.region}")
-    private String amazonRegion;
+//    @Value("${amazon.region}")
+//    private String amazonRegion;
 
 
-
-
-    // TODO: use builder
     @Bean
     public AmazonSNSClient awsSnsClient(){
-
+        // TODO: use builder
         AWSStaticCredentialsProvider awsStaticCredentialsProvider = new AWSStaticCredentialsProvider(
                 new BasicAWSCredentials(amazonAccessKey, amazonSecretKey));
 
-        //  .withRegion(Regions.fromName(amazonRegion))
-
         AWSCredentials credentials = awsStaticCredentialsProvider.getCredentials();
         return new AmazonSNSClient(credentials);
-
     }
-
 }

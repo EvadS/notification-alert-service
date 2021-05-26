@@ -14,5 +14,6 @@ import java.util.List;
 public interface NotificationTypeRepository extends JpaRepository<NotificationType, Long> {
 
     List<NotificationType> findAllByNotification(Notification notification);
+
     List<NotificationType> findAllByNotificationAndEnabled(Notification notificationItem, boolean isEnabled);
 }

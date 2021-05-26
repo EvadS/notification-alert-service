@@ -5,8 +5,6 @@ import com.se.service.notification.model.request.TemplateAttributeRequest;
 import com.se.service.notification.model.response.TemplateAttributeResponse;
 import com.se.service.notification.model.response.TemplateAttributeResponseList;
 
-import java.util.List;
-
 /**
  * Created by Evgeniy Skiba
  */

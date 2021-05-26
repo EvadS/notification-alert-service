@@ -26,7 +26,6 @@ public interface NotificationMapper {
     })
     NotificationResponse notificationItemToResponse(Notification notification, Set<String> placeHoList);
 
-
     @Mappings({
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name", source = "name"),

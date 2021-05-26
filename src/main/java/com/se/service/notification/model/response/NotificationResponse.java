@@ -1,19 +1,35 @@
 package com.se.service.notification.model.response;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by Evgeniy Skiba
  */
+@ApiModel(value = "NotificationResponse",
+        description = "Provide information about notification")
 public class NotificationResponse {
-
+    @ApiModelProperty(
+            value="id",
+            notes = "Notification unique identifier", required = true)
     private long id;
 
+    @ApiModelProperty(
+            value="name",
+            notes = "Notification name", required = true)
     private String name;
 
+    @ApiModelProperty(
+            value="enabled",
+            notes = "Notification status. Provide information about notification group can used or disabled", required = true)
     private boolean enabled;
 
+    @ApiModelProperty(
+            value="placeHoldersList",
+            notes = "List with all placeholders used in this notification template", required = true)
     private Set<String> placeHoldersList = new HashSet<>();
 
     public NotificationResponse() {

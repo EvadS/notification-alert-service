@@ -1,11 +1,15 @@
 package com.se.service.notification.model.request;
 
+import io.swagger.annotations.ApiModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Evgeniy Skiba on 13.05.21
  */
+@ApiModel(value = "TemplateAttributeListRequest",
+        description = "Provide list of template attribute")
 public class TemplateAttributeListRequest {
 
     private List<TemplateAttributeRequest> attributeRequestList = new ArrayList<>();

@@ -1,6 +1,10 @@
 package com.se.service.notification.handler.model;
 
 
+import io.swagger.annotations.ApiModel;
+
+@ApiModel(value = "ValidationError",
+        description = "Provide ValidationError")
 public class ValidationError {
     private String field;
     private String message;

@@ -5,7 +5,6 @@ import com.se.service.notification.dao.entity.NotificationType;
 import com.se.service.notification.model.request.NotificationTypeItemRequest;
 import com.se.service.notification.model.response.NotificationItemTypeResponse;
 
-
 import java.util.List;
 
 /**

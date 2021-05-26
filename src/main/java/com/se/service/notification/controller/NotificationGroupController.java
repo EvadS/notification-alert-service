@@ -67,7 +67,7 @@ public class NotificationGroupController implements NotificationGroupControllerB
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteNotificationGroup(
+    public ResponseEntity deleteNotificationGroup(
             @PathVariable(value = "id") @NotNull Long id) {
         notificationService.deleteNotificationGroup(id);
         return ResponseEntity.accepted().build();

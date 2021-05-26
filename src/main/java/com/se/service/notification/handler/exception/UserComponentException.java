@@ -21,7 +21,17 @@ public class UserComponentException extends RuntimeException {
         this.host = host;
         this.port = port;
         this.api = api;
+    }
 
+    public String getHost() {
+        return host;
+    }
 
+    public int getPort() {
+        return port;
+    }
+
+    public String getApi() {
+        return api;
     }
 }

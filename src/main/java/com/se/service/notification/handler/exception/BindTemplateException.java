@@ -15,5 +15,9 @@ public class BindTemplateException extends  RuntimeException {
         super(String.format("The '%s' has evaluated to null or missing.", expression));
         this.expression = expression;
     }
+
+    public String getExpression() {
+        return expression;
+    }
 }
 
