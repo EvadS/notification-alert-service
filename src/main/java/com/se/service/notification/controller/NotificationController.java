@@ -4,8 +4,8 @@ import com.se.service.notification.model.request.NotificationRequest;
 import com.se.service.notification.model.request.NotificationTypeRequest;
 import com.se.service.notification.model.response.NotificationBaseResponse;
 import com.se.service.notification.model.response.NotificationGroupResponse;
-import com.se.service.notification.model.response.NotificationResponse;
 import com.se.service.notification.model.response.NotificationItemTypeResponse;
+import com.se.service.notification.model.response.NotificationResponse;
 import com.se.service.notification.service.NotificationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-// TODO: add api to work with notification types
 
 /**
  * Created by Evgeniy Skiba
@@ -41,15 +39,15 @@ public class NotificationController {
     @GetMapping("/{id}")
     @ApiOperation(value = "Notification",
             notes = "Notification details by id", tags = {})
-    public ResponseEntity<NotificationResponse> getNotificationItem(@PathVariable(value = "id") @NotNull Long id){
+    public ResponseEntity<NotificationResponse> getNotificationItem(@PathVariable(value = "id") @NotNull Long id) {
         NotificationResponse notificationResponse = notificationService.getNotificationItem(id);
-        return  ResponseEntity.ok(notificationResponse);
+        return ResponseEntity.ok(notificationResponse);
     }
 
     @PostMapping
     @ApiOperation(value = "Create notification", notes = "Create  new notification")
     public ResponseEntity<NotificationBaseResponse> createNotificationItem(
-            @Valid @RequestBody NotificationRequest notificationRequest){
+            @Valid @RequestBody NotificationRequest notificationRequest) {
         NotificationBaseResponse notificationResponse = notificationService.createNotificationItem(notificationRequest);
         return ResponseEntity.ok(notificationResponse);
     }
@@ -58,7 +56,7 @@ public class NotificationController {
     @ApiOperation(value = "Update Notification",
             notes = "Update Notification by request model and uniques notification id")
     public ResponseEntity<NotificationBaseResponse> updateNotificationItem(@PathVariable(value = "id") @NotNull Long id,
-                                                                @RequestBody @Valid NotificationRequest notificationRequest){
+                                                                           @RequestBody @Valid NotificationRequest notificationRequest) {
         NotificationBaseResponse notificationResponse = notificationService.updateNotificationItem(id, notificationRequest);
         return ResponseEntity.ok(notificationResponse);
     }
@@ -76,9 +74,9 @@ public class NotificationController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Delete Notification",
             notes = "Delete Notification by unique identifoer")
-    public ResponseEntity<?> deleteNotificationItem(@PathVariable(value = "id") @NotNull Long id){
+    public ResponseEntity<?> deleteNotificationItem(@PathVariable(value = "id") @NotNull Long id) {
         notificationService.deleteNotificationItem(id);
-        return  ResponseEntity.accepted().build();
+        return ResponseEntity.accepted().build();
     }
 
     @GetMapping(value = "/list", produces = "application/json")
@@ -89,7 +87,7 @@ public class NotificationController {
             @RequestParam(name = "page", defaultValue = "0") int page,
 
             @Min(value = 1, message = "Page size must not be less than one")
-            @RequestParam(name = "size", defaultValue = "1") int size){
+            @RequestParam(name = "size", defaultValue = "1") int size) {
         Pageable pageable = PageRequest.of(
                 page,
                 size,
@@ -102,18 +100,18 @@ public class NotificationController {
     @ApiOperation(value = "Alert types ",
             notes = "Change alert type status by notifications")
     @PostMapping("/alert-types")
-    public  ResponseEntity<NotificationItemTypeResponse> setAlertTypeStatus(@Valid @RequestBody NotificationTypeRequest notificationRequest){
+    public ResponseEntity<NotificationItemTypeResponse> setAlertTypeStatus(@Valid @RequestBody NotificationTypeRequest notificationRequest) {
         NotificationItemTypeResponse notificationItemTypeResponse =
                 notificationService.setNotificationAlertTypes(notificationRequest);
 
-        return  ResponseEntity.ok(notificationItemTypeResponse);
+        return ResponseEntity.ok(notificationItemTypeResponse);
     }
 
     @ApiOperation(value = "Set alert types ",
             notes = "Set available alert status by notification unique identifier")
     @GetMapping("/alert-types/{notification-item-id}")
-    public  ResponseEntity<NotificationItemTypeResponse> getAlertType(@PathVariable(value = "notification-item-id") @NotNull Long notificationId){
+    public ResponseEntity<NotificationItemTypeResponse> getAlertType(@PathVariable(value = "notification-item-id") @NotNull Long notificationId) {
         NotificationItemTypeResponse notificationItemTypeResponse = notificationService.getNotificationAlertTypes(notificationId);
-        return  ResponseEntity.ok(notificationItemTypeResponse);
+        return ResponseEntity.ok(notificationItemTypeResponse);
     }
 }

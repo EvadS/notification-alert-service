@@ -27,7 +27,8 @@ public class OkStatusCodeFilteringPlugin implements OperationBuilderPlugin {
                             HttpStatus.UNAUTHORIZED.value(),
                             HttpStatus.ACCEPTED.value(),
                             HttpStatus.CREATED.value(),
-                            HttpStatus.FORBIDDEN.value())
+                            HttpStatus.FORBIDDEN.value(),
+                            HttpStatus.NOT_FOUND.value())
                             .contains(responseMessage.getCode()));
         }
     }

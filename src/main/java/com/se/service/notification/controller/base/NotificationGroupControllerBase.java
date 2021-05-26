@@ -22,7 +22,7 @@ public interface NotificationGroupControllerBase {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved created notification group",
                     response = NotificationGroupResponse.class),
-            @ApiResponse(code = 400, message = "Incorrect notification group name to create notification group", response = ErrorResponse.class),
+            @ApiResponse(code = 409, message = "Incorrect notification group name to create notification group", response = ErrorResponse.class),
             @ApiResponse(code = 422, message = "Incorrect model to create notification group", response = ErrorResponse.class),
     })
     @ApiOperation(value = "Notification group.",
