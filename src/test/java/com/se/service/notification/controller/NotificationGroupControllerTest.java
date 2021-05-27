@@ -28,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Created by Evgeniy Skiba
  */
 
-//@WebMvcTest
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = NotificationServiceApplication.class)
@@ -56,18 +54,6 @@ class NotificationGroupControllerTest {
     @LocalServerPort
     private int port;
 
-    @Test
-    public void givenGenericEntityRepository_whenSaveAndRetreiveEntity_thenOK() {
-
-        NotificationGroup notificationGroup = new NotificationGroup("test", true);
-        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
-
-        Long generatedId = genericEntity.getId();
-        NotificationGroup foundEntity = notificationGroupRepository.getOne(generatedId);
-
-        assertNotNull(foundEntity);
-        org.junit.jupiter.api.Assertions.assertEquals(genericEntity.getName(), foundEntity.getName());
-    }
 
     @DisplayName("create notification group 200")
     @Test
