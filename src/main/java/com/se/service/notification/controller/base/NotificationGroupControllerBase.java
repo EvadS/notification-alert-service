@@ -75,13 +75,13 @@ public interface NotificationGroupControllerBase {
     ResponseEntity<List<NotificationGroupResponse>> getList();
 
     @ApiResponses(value = {
-            @ApiResponse(code = 202, message = "notification group success deleted",
-                    response = NotificationGroupResponse.class),
+            @ApiResponse(code = 200, message = "notification group success deleted",
+                    response = Long.class),
             @ApiResponse(code = 404, message = "Notification group doesn't exists by unique identifier", response = ErrorResponse.class)
     })
     @ApiOperation(value = "Delete notification group",
             notes = "Delete notification group by unique identifier")
-    ResponseEntity deleteNotificationGroup(
+    ResponseEntity<Long> deleteNotificationGroup(
             @ApiParam(value = "notification group unique identifier", required = true, example = "1")
             @PathVariable(value = "id") @NotNull Long id);
 }

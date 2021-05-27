@@ -40,6 +40,7 @@ class NotificationGroupControllerTest {
     public static final String getByIdUrl = "/notification-group";
     public static final String deleteUrl = "/notification-group";
     public static final String changeStatusUrl = "/status/{id}/{status}";
+
     public static final String DEFAULT_BASE_NAME = "name";
     public static final boolean DEFAULT_GROUP_ENABLED = true;
 
@@ -99,7 +100,7 @@ class NotificationGroupControllerTest {
                 incorrectNotificationRequestType,
                 NotificationGroupResponse.class);
 
-       assertThat(response.getStatusCode(), is(HttpStatus.UNSUPPORTED_MEDIA_TYPE));
+        assertThat(response.getStatusCode(), is(HttpStatus.UNSUPPORTED_MEDIA_TYPE));
         assertNotNull(response.getBody());
 
     }
@@ -131,7 +132,7 @@ class NotificationGroupControllerTest {
         notificationGroupRepository.deleteAllInBatch();
     }
 
-    @DisplayName("delete notifciaction group correct")
+    @DisplayName("delete notification group correct")
     @Test
     public void should_delete_correct() {
 
@@ -156,14 +157,11 @@ class NotificationGroupControllerTest {
         assertThat(notificationGroupRepository.findAll().size(), is(0));
     }
 
-    @DisplayName("delete notifiaction group 404")
+    @DisplayName("delete notification group 404")
     @Test
     public void should_delete_not_found() {
 
         notificationGroupRepository.deleteAllInBatch();
-
-        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, true);
-        NotificationGroup notificationGroupGenerated = notificationGroupRepository.save(notificationGroup);
 
         NotificationGroupRequest notificationRequest = new NotificationGroupRequest();
         notificationRequest.setName(DEFAULT_BASE_NAME);
@@ -172,7 +170,7 @@ class NotificationGroupControllerTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String url = "http://localhost:" + port + "/" + deleteUrl + "/" +  1000;
+        String url = "http://localhost:" + port + "/" + deleteUrl + "/" + 1000;
         ResponseEntity response = restTemplate.exchange(url, HttpMethod.DELETE, null, ResponseEntity.class);
 
 
@@ -182,22 +180,27 @@ class NotificationGroupControllerTest {
     }
 
 
+    @DisplayName("update notification group 404")
     @Test
     public void update_notification_group_success() {
         notificationGroupRepository.deleteAllInBatch();
 
-        NotificationGroup notificationGroup = new NotificationGroup("test", true);
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, DEFAULT_GROUP_ENABLED);
         NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
 
         NotificationGroupRequest notificationRequest = new NotificationGroupRequest("test2", true);
 
-        ResponseEntity<Object> response = restTemplate.exchange(
+        ResponseEntity<NotificationGroupResponse> response = restTemplate.exchange(
                 "http://localhost:" + port + "/" + putUrl + "/" + genericEntity.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(notificationRequest),
-                Object.class);
+                NotificationGroupResponse.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
+
+        assertNotNull(response.getBody());
+        assertEquals(response.getBody().getName(), DEFAULT_BASE_NAME);
+        assertEquals(response.getBody().isStatus(), DEFAULT_GROUP_ENABLED);
 
         notificationGroupRepository.deleteAllInBatch();
     }
@@ -223,7 +226,6 @@ class NotificationGroupControllerTest {
                 Object.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
-
         notificationGroupRepository.deleteAllInBatch();
 
     }
@@ -243,19 +245,9 @@ class NotificationGroupControllerTest {
                 Object.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
-
         notificationGroupRepository.deleteAllInBatch();
     }
 
 
-    //Delete mapping
-    @Test
-    public void delete_notification_group_success() {
-
-    }
-
-    @Test
-    public void delete_notification_group_not_found() {
-
-    }
+ 
 }
