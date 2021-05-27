@@ -131,7 +131,7 @@ class NotificationGroupControllerTest {
         notificationGroupRepository.deleteAllInBatch();
     }
 
-    @DisplayName("delete notifciaction group correct")
+    @DisplayName("delete notification group correct")
     @Test
     public void should_delete_correct() {
 
@@ -156,14 +156,11 @@ class NotificationGroupControllerTest {
         assertThat(notificationGroupRepository.findAll().size(), is(0));
     }
 
-    @DisplayName("delete notifiaction group 404")
+    @DisplayName("delete notification group 404")
     @Test
     public void should_delete_not_found() {
 
         notificationGroupRepository.deleteAllInBatch();
-
-        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, true);
-        NotificationGroup notificationGroupGenerated = notificationGroupRepository.save(notificationGroup);
 
         NotificationGroupRequest notificationRequest = new NotificationGroupRequest();
         notificationRequest.setName(DEFAULT_BASE_NAME);
@@ -172,12 +169,13 @@ class NotificationGroupControllerTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        String url = "http://localhost:" + port + "/" + deleteUrl + "/" +  1000;
-        ResponseEntity response = restTemplate.exchange(url, HttpMethod.DELETE, null, ResponseEntity.class);
+      //  String url = "http://localhost:" + port + "/" + deleteUrl + "/" +  1000;
+    //    ResponseEntity response = restTemplate.exchange(url, HttpMethod.DELETE, null, ResponseEntity.class);
 
+        String entityUrl = "http://localhost:" + port + "/" + deleteUrl + "/" + 10000;
+        restTemplate.delete(entityUrl);
 
         assertThat(notificationGroupRepository.findAll().size(), is(1));
-        assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
 
     }
 
@@ -245,17 +243,5 @@ class NotificationGroupControllerTest {
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
 
         notificationGroupRepository.deleteAllInBatch();
-    }
-
-
-    //Delete mapping
-    @Test
-    public void delete_notification_group_success() {
-
-    }
-
-    @Test
-    public void delete_notification_group_not_found() {
-
-    }
+  }
 }
