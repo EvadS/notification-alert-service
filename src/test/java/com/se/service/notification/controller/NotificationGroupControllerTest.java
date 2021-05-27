@@ -20,6 +20,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -43,6 +44,8 @@ class NotificationGroupControllerTest {
 
     public static final String DEFAULT_BASE_NAME = "name";
     public static final boolean DEFAULT_GROUP_ENABLED = true;
+
+    public static final  Long incorrectID = 1000L;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -232,7 +235,7 @@ class NotificationGroupControllerTest {
 
     @Test
     public void update_notification_group_not_found() {
-        Long incorrectID = 1000L;
+
         NotificationGroup notificationGroup = new NotificationGroup("test", true);
         NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
 
@@ -248,6 +251,40 @@ class NotificationGroupControllerTest {
         notificationGroupRepository.deleteAllInBatch();
     }
 
+    @DisplayName("get existed item")
+    @Test
+    public void get_by_id_correct(){
+        notificationGroupRepository.deleteAllInBatch();
 
- 
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, DEFAULT_GROUP_ENABLED);
+        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
+
+        NotificationGroupResponse response = restTemplate.getForObject(
+                "http://localhost:" + port + "/" + getByIdUrl + "/" + genericEntity.getId(),
+              NotificationGroupResponse.class);
+
+
+        assertEquals(response.getName(), genericEntity.getName());
+        assertEquals(response.getId(), genericEntity.getId());
+
+        notificationGroupRepository.deleteAllInBatch();
+    }
+
+
+    @DisplayName("get not existed item")
+    @Test
+    public void get_by_id_not_exists(){
+        notificationGroupRepository.deleteAllInBatch();
+
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, DEFAULT_GROUP_ENABLED);
+        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
+
+        String resourceUrl = "http://localhost:" + port + "/" + getByIdUrl + "/" + incorrectID;
+
+        ResponseEntity<NotificationGroupResponse> response
+                = restTemplate.getForEntity(resourceUrl, NotificationGroupResponse.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+        notificationGroupRepository.deleteAllInBatch();
+    }
 }
