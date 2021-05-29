@@ -4,6 +4,7 @@ import com.se.service.notification.controller.base.NotificationGroupControllerBa
 import com.se.service.notification.model.request.NotificationGroupRequest;
 import com.se.service.notification.model.response.NotificationGroupResponse;
 import com.se.service.notification.service.NotificationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,9 +68,10 @@ public class NotificationGroupController implements NotificationGroupControllerB
 
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteNotificationGroup(
+    public ResponseEntity<Long> deleteNotificationGroup(
             @PathVariable(value = "id") @NotNull Long id) {
         notificationService.deleteNotificationGroup(id);
-        return ResponseEntity.accepted().build();
+
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 }

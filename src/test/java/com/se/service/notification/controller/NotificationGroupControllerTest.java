@@ -20,14 +20,13 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Created by Evgeniy Skiba
  */
-
-//@WebMvcTest
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -40,8 +39,11 @@ class NotificationGroupControllerTest {
     public static final String getByIdUrl = "/notification-group";
     public static final String deleteUrl = "/notification-group";
     public static final String changeStatusUrl = "/status/{id}/{status}";
+
     public static final String DEFAULT_BASE_NAME = "name";
     public static final boolean DEFAULT_GROUP_ENABLED = true;
+
+    public static final  Long incorrectID = 1000L;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -52,18 +54,6 @@ class NotificationGroupControllerTest {
     @LocalServerPort
     private int port;
 
-    @Test
-    public void givenGenericEntityRepository_whenSaveAndRetreiveEntity_thenOK() {
-
-        NotificationGroup notificationGroup = new NotificationGroup("test", true);
-        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
-
-        Long generatedId = genericEntity.getId();
-        NotificationGroup foundEntity = notificationGroupRepository.getOne(generatedId);
-
-        assertNotNull(foundEntity);
-        org.junit.jupiter.api.Assertions.assertEquals(genericEntity.getName(), foundEntity.getName());
-    }
 
     @DisplayName("create notification group 200")
     @Test
@@ -99,7 +89,7 @@ class NotificationGroupControllerTest {
                 incorrectNotificationRequestType,
                 NotificationGroupResponse.class);
 
-       assertThat(response.getStatusCode(), is(HttpStatus.UNSUPPORTED_MEDIA_TYPE));
+        assertThat(response.getStatusCode(), is(HttpStatus.UNSUPPORTED_MEDIA_TYPE));
         assertNotNull(response.getBody());
 
     }
@@ -169,33 +159,37 @@ class NotificationGroupControllerTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-      //  String url = "http://localhost:" + port + "/" + deleteUrl + "/" +  1000;
-    //    ResponseEntity response = restTemplate.exchange(url, HttpMethod.DELETE, null, ResponseEntity.class);
+        String url = "http://localhost:" + port + "/" + deleteUrl + "/" + 1000;
+        ResponseEntity response = restTemplate.exchange(url, HttpMethod.DELETE, null, ResponseEntity.class);
 
-        String entityUrl = "http://localhost:" + port + "/" + deleteUrl + "/" + 10000;
-        restTemplate.delete(entityUrl);
 
         assertThat(notificationGroupRepository.findAll().size(), is(1));
+        assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
 
     }
 
 
+    @DisplayName("update notification group 404")
     @Test
     public void update_notification_group_success() {
         notificationGroupRepository.deleteAllInBatch();
 
-        NotificationGroup notificationGroup = new NotificationGroup("test", true);
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, DEFAULT_GROUP_ENABLED);
         NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
 
         NotificationGroupRequest notificationRequest = new NotificationGroupRequest("test2", true);
 
-        ResponseEntity<Object> response = restTemplate.exchange(
+        ResponseEntity<NotificationGroupResponse> response = restTemplate.exchange(
                 "http://localhost:" + port + "/" + putUrl + "/" + genericEntity.getId(),
                 HttpMethod.PUT,
                 new HttpEntity<>(notificationRequest),
-                Object.class);
+                NotificationGroupResponse.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
+
+        assertNotNull(response.getBody());
+        assertEquals(response.getBody().getName(), DEFAULT_BASE_NAME);
+        assertEquals(response.getBody().isStatus(), DEFAULT_GROUP_ENABLED);
 
         notificationGroupRepository.deleteAllInBatch();
     }
@@ -221,14 +215,13 @@ class NotificationGroupControllerTest {
                 Object.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.UNPROCESSABLE_ENTITY));
-
         notificationGroupRepository.deleteAllInBatch();
 
     }
 
     @Test
     public void update_notification_group_not_found() {
-        Long incorrectID = 1000L;
+
         NotificationGroup notificationGroup = new NotificationGroup("test", true);
         NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
 
@@ -241,7 +234,43 @@ class NotificationGroupControllerTest {
                 Object.class);
 
         assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
+        notificationGroupRepository.deleteAllInBatch();
+    }
+
+    @DisplayName("get existed item")
+    @Test
+    public void get_by_id_correct(){
+        notificationGroupRepository.deleteAllInBatch();
+
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, DEFAULT_GROUP_ENABLED);
+        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
+
+        NotificationGroupResponse response = restTemplate.getForObject(
+                "http://localhost:" + port + "/" + getByIdUrl + "/" + genericEntity.getId(),
+              NotificationGroupResponse.class);
+
+
+        assertEquals(response.getName(), genericEntity.getName());
+        assertEquals(response.getId(), genericEntity.getId());
 
         notificationGroupRepository.deleteAllInBatch();
-  }
+    }
+
+
+    @DisplayName("get not existed item")
+    @Test
+    public void get_by_id_not_exists(){
+        notificationGroupRepository.deleteAllInBatch();
+
+        NotificationGroup notificationGroup = new NotificationGroup(DEFAULT_BASE_NAME, DEFAULT_GROUP_ENABLED);
+        NotificationGroup genericEntity = notificationGroupRepository.save(notificationGroup);
+
+        String resourceUrl = "http://localhost:" + port + "/" + getByIdUrl + "/" + incorrectID;
+
+        ResponseEntity<NotificationGroupResponse> response
+                = restTemplate.getForEntity(resourceUrl, NotificationGroupResponse.class);
+
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+        notificationGroupRepository.deleteAllInBatch();
+    }
 }
