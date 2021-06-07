@@ -6,9 +6,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import com.amazonaws.services.simpleemail.model.*;
+import com.se.service.notification.configuration.AwsConfiguration;
+import com.se.service.notification.configuration.NotificationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -19,21 +20,14 @@ import java.nio.charset.StandardCharsets;
  */
 @Component
 public class SesMailSenderComponent {
-
     private static final Logger logger = LoggerFactory.getLogger(SesMailSenderComponent.class);
+    private final AwsConfiguration awsConfiguration;
+    private  final NotificationProperties notificationProperties;
 
-    // TODO: move to props file
-    @Value("${ses.mail.address}")
-    private String sesEmailFrom;
-    @Value("${amazon.access.key}")
-    private String amazonAccessKey;
-    @Value("${amazon.secret.key}")
-    private String amazonSecretKey;
-    @Value("${amazon.region}")
-    private String amazonRegion;
 
-    public SesMailSenderComponent() {
-
+    public SesMailSenderComponent(AwsConfiguration awsConfiguration, NotificationProperties notificationProperties) {
+        this.awsConfiguration = awsConfiguration;
+        this.notificationProperties = notificationProperties;
     }
 
     public boolean sendHtml(String emailTo, String subject, String bodyHTML) {
@@ -42,8 +36,10 @@ public class SesMailSenderComponent {
                 .withCredentials(
                         new AWSStaticCredentialsProvider(
                                 new BasicAWSCredentials(
-                                        amazonAccessKey, amazonSecretKey)))
-                .withRegion(Regions.fromName(amazonRegion))
+                                        awsConfiguration.getAccessKey(),
+                                        awsConfiguration.getSecretKey()
+                        )))
+                .withRegion(Regions.fromName(awsConfiguration.getRegionStatic()))
                 .build();
 
 
@@ -58,7 +54,7 @@ public class SesMailSenderComponent {
         SendEmailRequest request = new SendEmailRequest()
                 .withDestination(new Destination().withToAddresses(emailTo))
                 .withMessage(message)
-                .withSource(sesEmailFrom);
+                .withSource(notificationProperties.getSender());
 
         SendEmailResult sendEmailResult = awsSes.sendEmail(request);
         logger.debug("Email with subject: {} has been sent. Message id: {}", subject, sendEmailResult.getMessageId());

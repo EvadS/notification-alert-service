@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 public class NotificationServiceImpl implements NotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationServiceImpl.class);
+    public static final String NOTIFICATION_GROUP = "Notification group";
 
     private final NotificationGroupRepository notificationGroupRepository;
     private final NotificationRepository notificationRepository;
@@ -80,7 +81,7 @@ public class NotificationServiceImpl implements NotificationService {
         logger.debug("Handle update notification Group, id:{},  request:{}", id, request);
 
         NotificationGroup notificationGroup = notificationGroupRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Notification group", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException(NOTIFICATION_GROUP, "id", id));
 
 
         boolean alreadyExistsInDataBase =notificationGroupRepository.existsByName(request.getName());
@@ -238,14 +239,11 @@ public class NotificationServiceImpl implements NotificationService {
                .map(it -> {
 
                    Set<String> templatePlaceHolders =  templateService.getTemplateVariables(it.getHtmlPart());
-                   NotificationResponse notificationResponse =
-                           NotificationMapper.INSTANCE.notificationItemToResponse(it, templatePlaceHolders);
-
-                   return notificationResponse;
+                    return NotificationMapper.INSTANCE.notificationItemToResponse(it, templatePlaceHolders);
                }).collect(Collectors.toList());
 
-        Page<NotificationResponse> notificationResponsePage = new PageImpl<>(notificationResponseList, pageable, notificationResponseList.size());
-        return notificationResponsePage;
+        return new PageImpl<>(notificationResponseList, pageable, notificationResponseList.size());
+
     }
 
     @Override
@@ -270,8 +268,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public NotificationItemTypeResponse setNotificationAlertTypes(NotificationTypeRequest notificationRequest) {
-       //TODO: not implemented
-
         Notification notification = notificationRepository.findById(notificationRequest.getNotificationItemId())
                 .orElseThrow(() -> new ResourceNotFoundException("Notification Item", "id", notificationRequest.getNotificationItemId()));
 

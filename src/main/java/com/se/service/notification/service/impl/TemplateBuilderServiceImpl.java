@@ -29,9 +29,8 @@ import java.util.stream.Collectors;
 @Service
 public class TemplateBuilderServiceImpl implements TemplateBuilderService {
 
-    private final static Logger logger = LoggerFactory.getLogger(TemplateBuilderServiceImpl.class);
     public static final String TEMPLATE_NAME = "templateName";
-
+    private final static Logger logger = LoggerFactory.getLogger(TemplateBuilderServiceImpl.class);
     private final Configuration freemarkerConfiguration;
     private final TemplateVariablesRepository templateVariablesRepository;
 
@@ -41,14 +40,12 @@ public class TemplateBuilderServiceImpl implements TemplateBuilderService {
     }
 
 
-
     @Override
     public String bindTemplate(String templateBody, Map<String, String> templateModel) {
         try {
             Template template = new Template(TEMPLATE_NAME, new StringReader(templateBody), freemarkerConfiguration);
-            String bindTemplate = FreeMarkerTemplateUtils.processTemplateIntoString(template, templateModel);
+            return FreeMarkerTemplateUtils.processTemplateIntoString(template, templateModel);
 
-            return bindTemplate;
         } catch (IOException e) {
             // SkiEA  this situation checked before when we got template from data base
             throw new NotFoundException(e.getLocalizedMessage());
@@ -57,17 +54,18 @@ public class TemplateBuilderServiceImpl implements TemplateBuilderService {
             throw new BindTemplateException(e.getBlamedExpressionString());
         }
     }
+
     @Override
     public Set<String> getTemplateVariables(String templateBody) {
 
-        Template template = null;
+        Template template;
         try {
             template = new Template("templateName", new StringReader(templateBody),
                     freemarkerConfiguration);
         } catch (IOException ioException) {
             // SkiEa doesn't happen cause use template from data base - it handled before
             logger.error("Template IOException: {}", ioException.getLocalizedMessage());
-            return new HashSet<String>();
+            return new HashSet<>();
         }
 
         // Template template = getTemplate(templateName);
@@ -96,19 +94,18 @@ public class TemplateBuilderServiceImpl implements TemplateBuilderService {
         //Template variables in body
         Set<String> templateExpressionSet = getTemplateVariables(templateBody);
 
-        logger.info("Template has:{} expressions.",templateExpressionSet.size());
+        logger.info("Template has:{} expressions.", templateExpressionSet.size());
         if (templateExpressionSet.isEmpty()) {
             // Nothing to check
             return true;
         }
 
-       logger.info("The current template expressions:[{}] ",String.join(",", templateExpressionSet));
+        logger.info("The current template expressions:[{}] ", String.join(",", templateExpressionSet));
 
         Set<String> availableExpressions = templateVariablesRepository.findAll().stream()
                 .map(TemplateVariable::getValue)
                 .collect(Collectors.toSet());
 
-        //TODO: Get list with unsupported attributes
         return availableExpressions.containsAll(templateExpressionSet);
     }
 }

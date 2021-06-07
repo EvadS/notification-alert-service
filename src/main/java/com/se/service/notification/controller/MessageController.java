@@ -39,7 +39,7 @@ public class MessageController {
     @ApiOperation(value = "Send notification",
             notes = "Send notification by notification group id with requirement parameters ")
     @PostMapping("/send")
-    public ResponseEntity sendMessage(@Valid @RequestBody SendNotificationRequest notificationRequest) {
+    public ResponseEntity<?> sendMessage(@Valid @RequestBody SendNotificationRequest notificationRequest) {
         messageService.sendMessageByType(notificationRequest);
         return ResponseEntity.accepted().build();
     }

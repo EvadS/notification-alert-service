@@ -1,11 +1,10 @@
 package com.se.service.notification.service.notification;
 
 
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.MailFromDomainNotVerifiedException;
 import com.amazonaws.services.simpleemail.model.MessageRejectedException;
-import com.se.service.notification.component.SesMailSenderComponent;
 import com.se.service.notification.component.SendGridMailerComponent;
+import com.se.service.notification.component.SesMailSenderComponent;
 import com.se.service.notification.configuration.NotificationProperties;
 import com.se.service.notification.model.NotificationModel;
 import com.se.service.notification.model.enums.NotificationAlertType;
@@ -22,15 +21,14 @@ import java.io.IOException;
 public class EmailAlertStrategy implements NotificationAlertsStrategy {
 
 
-    private final NotificationProperties notificationProperties;
-
     private final static Logger logger = LoggerFactory.getLogger(EmailAlertStrategy.class);
+    private final NotificationProperties notificationProperties;
     private final SesMailSenderComponent sesMailSenderComponent;
     private final SendGridMailerComponent sendGridMailerComponent;
 
 
     public EmailAlertStrategy(NotificationProperties notificationProperties, SesMailSenderComponent sesMailSenderComponent,
-                              SendGridMailerComponent sendGridMailerComponent                             ) {
+                              SendGridMailerComponent sendGridMailerComponent) {
         this.notificationProperties = notificationProperties;
         this.sesMailSenderComponent = sesMailSenderComponent;
         this.sendGridMailerComponent = sendGridMailerComponent;
@@ -42,11 +40,10 @@ public class EmailAlertStrategy implements NotificationAlertsStrategy {
     public void sendNotification(NotificationModel notificationModel) {
 
         try {
-            if(notificationProperties.isSesDefault()){
+            if (notificationProperties.isSesDefault()) {
                 //send by ses
                 sendBySes(notificationModel);
-            }
-            else {
+            } else {
                 // send by send grid
                 sendBySendGrid(notificationModel);
             }
@@ -54,11 +51,10 @@ public class EmailAlertStrategy implements NotificationAlertsStrategy {
             logger.error("MailFromDomainNotVerifiedException: {}", e.getMessage());
         } catch (MessageRejectedException ex) {
             logger.error("MessageRejectedException: {}", ex.getMessage());
-        } catch ( IOException ex){
-            String mailProvider = notificationProperties.isSesDefault() ? "aws ses": "send grid";
-            logger.error("Send email exception. Provider:{}, message:{}",mailProvider,ex.getLocalizedMessage() );
-        }
-        catch (Exception e) {
+        } catch (IOException ex) {
+            String mailProvider = notificationProperties.isSesDefault() ? "aws ses" : "send grid";
+            logger.error("Send email exception. Provider:{}, message:{}", mailProvider, ex.getLocalizedMessage());
+        } catch (Exception e) {
             logger.error("Bind template exception: {}. Email didn't send.", e.getMessage());
         }
 

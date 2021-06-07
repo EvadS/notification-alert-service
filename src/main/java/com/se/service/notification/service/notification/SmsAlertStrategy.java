@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SmsAlertStrategy implements NotificationAlertsStrategy {
 
+    public static final String SMS_NOTIFICATION_ERROR = "sms notification error";
     private final static Logger logger = LoggerFactory.getLogger(SmsAlertStrategy.class);
     private final SnsSenderComponent snsSenderComponent;
 
@@ -30,13 +31,12 @@ public class SmsAlertStrategy implements NotificationAlertsStrategy {
         AWSCredentialsProvider awsCreds = new ClasspathPropertiesFileCredentialsProvider();
         AWSCredentials credentials = awsCreds.getCredentials();
 
-
-        // TODO: handle specify exceptions
         try {
             snsSenderComponent.sendNotification(notificationModel);
         } catch (Exception e) {
-            logger.error("sms notification error", e.getLocalizedMessage());
+            logger.error(SMS_NOTIFICATION_ERROR, e.getLocalizedMessage());
         }
+
     }
 
 
