@@ -24,24 +24,16 @@ public class SesMailSenderComponent {
     private final AwsConfiguration awsConfiguration;
     private  final NotificationProperties notificationProperties;
 
+    private final AmazonSimpleEmailService awsEmailService;
 
-    public SesMailSenderComponent(AwsConfiguration awsConfiguration, NotificationProperties notificationProperties) {
+    public SesMailSenderComponent(AwsConfiguration awsConfiguration, NotificationProperties notificationProperties,
+                                  AmazonSimpleEmailService awsEmailService) {
         this.awsConfiguration = awsConfiguration;
         this.notificationProperties = notificationProperties;
+        this.awsEmailService = awsEmailService;
     }
 
     public boolean sendHtml(String emailTo, String subject, String bodyHTML) {
-
-        AmazonSimpleEmailService awsSes = AmazonSimpleEmailServiceClientBuilder.standard()
-                .withCredentials(
-                        new AWSStaticCredentialsProvider(
-                                new BasicAWSCredentials(
-                                        awsConfiguration.getAccessKey(),
-                                        awsConfiguration.getSecretKey()
-                        )))
-                .withRegion(Regions.fromName(awsConfiguration.getRegionStatic()))
-                .build();
-
 
         Content content = new Content()
                 .withCharset(StandardCharsets.UTF_8.name()).withData(bodyHTML);
@@ -56,7 +48,7 @@ public class SesMailSenderComponent {
                 .withMessage(message)
                 .withSource(notificationProperties.getSender());
 
-        SendEmailResult sendEmailResult = awsSes.sendEmail(request);
+        SendEmailResult sendEmailResult = awsEmailService.sendEmail(request);
         logger.debug("Email with subject: {} has been sent. Message id: {}", subject, sendEmailResult.getMessageId());
         return !StringUtils.isEmpty(sendEmailResult.getMessageId());
     }

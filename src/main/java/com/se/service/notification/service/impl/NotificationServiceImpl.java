@@ -210,11 +210,6 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<NotificationResponse> notificationItemByParent(long id) {
-        return null;
-    }
-
-    @Override
     public NotificationGroupResponse getGroupInfo(Long id) {
         NotificationGroup notificationGroup = notificationGroupRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Notification group", "id", id));

@@ -35,7 +35,7 @@ public interface NotificationService {
 
     void changeNotificationItemStatus(long id, boolean status);
 
-    List<NotificationResponse> notificationItemByParent(long parentId);
+    //List<NotificationResponse> notificationItemByParent(long parentId);
 
     NotificationGroupResponse getGroupInfo(Long id);
 
