@@ -34,7 +34,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Notification service APIs")
-                .description("This page lists all the rest apis for Swagger Sample App.")
+                .description("This page lists all the rest apis for Notification Sample App.")
                 .version("1.0-SNAPSHOT")
                 .build();
     }
